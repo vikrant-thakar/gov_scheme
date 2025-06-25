@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import ZycoonDescription from "@/components/ZycoonDescription";
 
 export default function AboutPage() {
   return (
@@ -50,10 +51,7 @@ export default function AboutPage() {
       <div className="flex flex-col md:flex-row items-center gap-12">
         {/* Description */}
         <div className="w-full md:w-1/2 space-y-6 text-gray-100 text-lg">
-          <p>zycoon is a National Platform that aims to offer one-stop search and discovery of the Government schemes.</p>
-          <p>It provides an innovative, technology-based solution to discover scheme information based upon the eligibility of the citizen.</p>
-          <p>The platform helps the citizen to find the right Government schemes for them. It also guides on how to apply for different Government schemes. Thus no need to visit multiple Government websites.</p>
-          <p>zycoon platform is Developed, Managed, and Operated by National e-Governance Division (NeGD), with the Support of Ministry of Electronics and Information Technology (MeitY), Department of Administrative Reforms and Public Grievance (DARPG) and in partnership with other Central and State Ministries/Departments.</p>
+        <ZycoonDescription />
         </div>
         {/* Illustration */}
         <div className="w-full md:w-1/2 flex justify-center">
@@ -111,6 +109,7 @@ export default function AboutPage() {
           <p className="text-gray-300">Deep dive into dedicated scheme pages for fine grained scheme details before you apply</p>
         </div>
       </div>
+      
     </div>
   );
 }

@@ -12,9 +12,7 @@ export default function SchemesHero() {
 
   if (!mounted) return null; // Prevent hydration mismatch
 
-  // To "pause" a GIF, show a static frame (e.g., a PNG preview) when not hovered.
-  // On hover, show the GIF with a unique key to restart it.
-  // We'll use the GIF for both, but with a key change to restart on hover.
+ 
 
   return (
     <div className="w-full flex flex-col items-center py-12 bg-transparent transition-colors duration-300">

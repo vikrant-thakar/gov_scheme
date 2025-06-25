@@ -21,6 +21,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <title>Zycoon - Government Schemes Made Simple</title>
+        <link rel="icon" href="/zycoon.jpeg" type="image/jpeg" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased relative min-h-screen bg-[#23262b] text-gray-100`}
         style={{ minHeight: "100vh" }}

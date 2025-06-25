@@ -1,6 +1,7 @@
 import SchemesHero from "@/components/SchemesHero";
 import Categories from "@/components/Categories";
 import BackgroundCarousel from "../components/BackgroundCarousel";
+import ZycoonDescription from "@/components/ZycoonDescription";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
       <div className="pt-60 sm:pt-80 md:pt-96 lg:pt-[28rem]">
         <SchemesHero />
         <Categories />
+        <ZycoonDescription />
       </div>
     </>
   );
