@@ -55,7 +55,7 @@ export default function Categories() {
                     categoriesToShow.map((cat) => (
                         <div
                             key={cat.name}
-                            className="flex flex-col items-center bg-[#181c20] p-4 rounded shadow hover:scale-105 transition"
+                            className="flex flex-col items-center bg-transparent p-4 rounded border border-gray-400 shadow hover:scale-105 transition"
                         >
                             <span className="text-4xl mb-2">{cat.icon}</span>
                             <span className="text-green-400 font-bold text-sm mb-1">
@@ -71,7 +71,7 @@ export default function Categories() {
                     statesToShow.map((state) => (
                         <div
                             key={state.name}
-                            className="flex flex-col items-center bg-[#181c20] p-4 rounded shadow hover:scale-105 transition"
+                            className="flex flex-col items-center bg-transparent p-4 rounded border border-gray-400 shadow hover:scale-105 transition"
                         >
                             <span className="text-4xl mb-2">{state.icon}</span>
                             <span className="text-green-400 font-bold text-sm mb-1">
@@ -88,7 +88,7 @@ export default function Categories() {
                     ministriesToShow.map((min) => (
                         <div
                             key={min.name}
-                            className="flex flex-col items-center bg-[#181c20] p-4 rounded shadow hover:scale-105 transition"
+                            className="flex flex-col items-center bg-transparent p-4 rounded border border-gray-400 shadow hover:scale-105 transition"
                         >
                             <span className="text-4xl mb-2">{min.icon}</span>
                             <span className="text-green-400 font-bold text-sm mb-1">

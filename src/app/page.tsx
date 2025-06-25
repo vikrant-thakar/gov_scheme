@@ -1,11 +1,15 @@
 import SchemesHero from "@/components/SchemesHero";
 import Categories from "@/components/Categories";
+import BackgroundCarousel from "../components/BackgroundCarousel";
 
 export default function Home() {
   return (
-    <div className="mt-115">
-      <SchemesHero />
-      <Categories />
-    </div>
+    <>
+      <BackgroundCarousel />
+      <div className="pt-60 sm:pt-80 md:pt-96 lg:pt-[28rem]">
+        <SchemesHero />
+        <Categories />
+      </div>
+    </>
   );
 }

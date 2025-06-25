@@ -1,9 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <nav
@@ -46,34 +49,34 @@ export default function Navbar() {
         </button>
         {/* Nav links: visible on desktop only */}
         <div className="hidden md:flex gap-2">
-          <a
-            href="#"
-            className="px-3 py-1 rounded bg-[#1a2231] text-white font-semibold"
+          <Link
+            href="/"
+            className={`px-3 py-1 rounded ${pathname === "/" ? "bg-white  text-black font-semibold" : "text-gray-200 hover:bg-[#1a2231]"}`}
           >
             Home
-          </a>
-          <a
-            href="#"
-            className="px-3 py-1 rounded text-gray-200 hover:bg-[#1a2231]"
+          </Link>
+          <Link
+            href="/about"
+            className={`px-3 py-1 rounded ${pathname === "/about" ? "bg-white  text-black font-semibold" : "text-gray-200 hover:bg-[#1a2231]"}`}
           >
             About Us
-          </a>
-          <a
-            href="#"
-            className="px-3 py-1 rounded text-gray-200 hover:bg-[#1a2231]"
+          </Link>
+          <Link
+            href="/contact"
+            className={`px-3 py-1 rounded ${pathname === "/contact" ? "bg-white  text-black font-semibold" : "text-gray-200 hover:bg-[#1a2231]"}`}
           >
             Contact Us
-          </a>
+          </Link>
         </div>
       </div>
 
       {/* Search bar: always visible */}
       <div className="flex-1 flex justify-center">
         <div
-          className="flex items-center px-4 py-2 rounded-md w-full max-w-md bg-[#2d3a4d]/70 backdrop-blur"
+          className="flex items-center px-4 py-2 rounded-md w-full max-w-md bg-white/70 backdrop-blur"
         >
           <svg
-            className="w-5 h-5 mr-2 text-gray-400"
+            className="w-5 h-5 mr-2 text-black"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -89,9 +92,9 @@ export default function Navbar() {
             />
           </svg>
           <input
-            className="bg-transparent outline-none w-full text-gray-200 placeholder:text-gray-400"
+            className="bg-transparent outline-none w-full text-black placeholder:text-gray-800"
             type="text"
-            placeholder="Search"
+            placeholder="Search for Schemes"
           />
         </div>
       </div>
@@ -100,12 +103,12 @@ export default function Navbar() {
       <div className="flex items-center gap-2 md:gap-4 ml-2 md:ml-4">
         {/* Notification bell */}
         <button
-          className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#1a2231]"
+          className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#1a2231] relative"
           title="Notifications"
         >
           <svg
-            width="22"
-            height="22"
+            width="30"
+            height="30"
             fill="none"
             stroke="#cbd5e1"
             strokeWidth="2"
@@ -113,6 +116,8 @@ export default function Navbar() {
           >
             <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
           </svg>
+          {/* Notification badge */}
+          <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5  border-black">10</span>
         </button>
         {/* Avatar */}
         <div className="w-9 h-9 rounded-full bg-gray-300 overflow-hidden border-2 border-gray-200">
@@ -139,24 +144,27 @@ export default function Navbar() {
           >
             &times;
           </button>
-          <a
-            href="#"
-            className="py-3 px-6 text-white w-full text-center hover:bg-[#1a2231]"
+          <Link
+            href="/"
+            className={`py-3 px-6 w-full text-center ${pathname === "/" ? "bg-[#1a2231] text-white font-semibold" : "text-white hover:bg-[#1a2231]"}`}
+            onClick={() => setMenuOpen(false)}
           >
             Home
-          </a>
-          <a
-            href="#"
-            className="py-3 px-6 text-white w-full text-center hover:bg-[#1a2231]"
+          </Link>
+          <Link
+            href="/about"
+            className={`py-3 px-6 w-full text-center ${pathname === "/about" ? "bg-[#1a2231] text-white font-semibold" : "text-white hover:bg-[#1a2231]"}`}
+            onClick={() => setMenuOpen(false)}
           >
             About Us
-          </a>
-          <a
-            href="#"
-            className="py-3 px-6 text-white w-full text-center hover:bg-[#1a2231]"
+          </Link>
+          <Link
+            href="/contact"
+            className={`py-3 px-6 w-full text-center ${pathname === "/contact" ? "bg-[#1a2231] text-white font-semibold" : "text-white hover:bg-[#1a2231]"}`}
+            onClick={() => setMenuOpen(false)}
           >
             Contact Us
-          </a>
+          </Link>
         </div>
       )}
     </nav>

@@ -25,22 +25,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased relative min-h-screen bg-[#23262b] text-gray-100`}
         style={{ minHeight: "100vh" }}
       >
-        {/* Top half background image */}
-        <div
-          className="absolute top-0 left-0 w-full h-140 z-0"
-          style={{
-            backgroundImage: "url('/building.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
-        {/* Content overlay */}
-        <div className="relative z-10">
+        {/* <BackgroundCarousel /> Removed from layout */}
+        {/* Navbar OUTSIDE the z-10 container, with z-50 */}
+        <div className="fixed top-0 left-0 w-full z-50">
           <Navbar />
+        </div>
+        <div className="relative z-10 pt-20">
           {children}
-          <div className="mt-20">
-            <Footer />
-          </div>
+          <Footer />
         </div>
       </body>
     </html>

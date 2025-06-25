@@ -1,8 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function SchemesHero() {
   const [mounted, setMounted] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -10,25 +12,43 @@ export default function SchemesHero() {
 
   if (!mounted) return null; // Prevent hydration mismatch
 
+  // To "pause" a GIF, show a static frame (e.g., a PNG preview) when not hovered.
+  // On hover, show the GIF with a unique key to restart it.
+  // We'll use the GIF for both, but with a key change to restart on hover.
+
   return (
     <div className="w-full flex flex-col items-center py-12 bg-transparent transition-colors duration-300">
       <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center transition-colors duration-300 text-gray-100">
         Find the schemes you&apos;re eligible for
       </h1>
-      <button className="text-xl font-semibold px-10 py-4 rounded-md flex items-center gap-3 transition bg-green-500 hover:bg-green-600 text-white">
+      <button
+        className="text-xl font-semibold px-10 py-4 rounded-md flex items-center gap-3 transition bg-green-500 hover:bg-green-600 text-white"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
         Find Schemes For You
-        <span>
-          <svg
-            className="inline-block"
-            width="28"
-            height="28"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3"
-            viewBox="0 0 24 24"
-          >
-            <path d="M5 12h14M13 6l6 6-6 6" />
-          </svg>
+        <span className="inline-block w-7 h-7 align-middle">
+          {!hovered ? (
+            <Image
+              src="/Right-Arrow-unscreen1.png"
+              alt="Right Arrow Static"
+              width={28}
+              height={28}
+              className="w-7 h-7 object-contain inline-block"
+              style={{ display: 'inline-block', verticalAlign: 'middle' }}
+              unoptimized
+            />
+          ) : (
+            <Image
+              src="/Right-Arrow-unscreen.gif"
+              alt="Right Arrow Animation"
+              width={28}
+              height={28}
+              className="w-7 h-7 object-contain inline-block"
+              style={{ display: 'inline-block', verticalAlign: 'middle' }}
+              unoptimized
+            />
+          )}
         </span>
       </button>
     </div>
