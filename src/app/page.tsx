@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <>
       <BackgroundCarousel />
-      <div className="pt-60 sm:pt-80 md:pt-96 lg:pt-[28rem]">
+      <div className="pt-0 sm:pt-80 md:pt-96 lg:pt-[28rem]">
         <SchemesHero />
         <Categories />
         <ZycoonDescription />

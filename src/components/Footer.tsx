@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-[#181c20] text-gray-200 pt-8 pb-4 mt-16">
+    <footer className="w-full bg-[#181c20] text-gray-200 pt-8 pb-4 mt-16 relative z-20">
       <div className="max-w-4xl mx-auto px-4 flex flex-col md:flex-row md:justify-between items-center gap-6">
         {/* Temporary Logo */}
         <div className="flex flex-col items-center gap-2 mb-2 md:mb-0">
