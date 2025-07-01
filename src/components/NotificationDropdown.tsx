@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Notification } from "@/data/notificationsData";
+import LoginModal from "./LoginModal";
+import { useRouter } from "next/navigation";
 
 interface NotificationDropdownProps {
   isOpen: boolean;
@@ -19,12 +21,22 @@ export default function NotificationDropdown({
   onMarkAllAsRead 
 }: NotificationDropdownProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen && !isLoggedIn) {
+      setShowLoginModal(true);
+    } else {
+      setShowLoginModal(false);
+    }
+  }, [isOpen, isLoggedIn]);
 
   // Get only the 3 latest notifications
   const latestNotifications = notifications.slice(0, 3);
@@ -39,38 +51,39 @@ export default function NotificationDropdown({
         className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
         onClick={onClose}
       />
-      
-      {/* Notification dropdown */}
-      <div className="fixed top-20 right-4 w-100 max-h-[80vh] bg-[#232e3e]/90 rounded-lg shadow-2xl border border-gray-700 z-50 overflow-hidden">
-        {/* Header */}
-        <div className="flex justify-between items-center p-4 border-b border-white">
-          <h3 className="text-lg font-semibold text-gray-100">Notifications</h3>
-          <div className="flex items-center gap-2">
-            {unreadCount > 0 && (
-              <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                {unreadCount}
-              </span>
-            )}
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-white transition"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-
-        {/* Notifications list */}
-        <div className="max-h-[60vh] overflow-y-auto">
-          {!isLoggedIn ? (
-            <div className="p-8 text-center text-gray-400 flex flex-col items-center gap-4">
-              <p>Please log in to stay updated.</p>
-              <Link href="/auth/signin">
-                <button className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded font-semibold transition">Login</button>
-              </Link>
+      {/* Login Modal if not logged in */}
+      <LoginModal
+        open={showLoginModal}
+        onClose={onClose}
+        message="Please log in to stay updated with notifications."
+        onLogin={() => {
+          onClose();
+          router.push("/auth/signin");
+        }}
+      />
+      {/* Notification dropdown, only if logged in */}
+      {isLoggedIn && (
+        <div className="fixed top-20 right-4 w-100 max-h-[80vh] bg-[#232e3e]/90 rounded-lg shadow-2xl border border-gray-700 z-50 overflow-hidden">
+          {/* Header */}
+          <div className="flex justify-between items-center p-4 border-b border-white">
+            <h3 className="text-lg font-semibold text-gray-100">Notifications</h3>
+            <div className="flex items-center gap-2">
+              {unreadCount > 0 && (
+                <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                  {unreadCount}
+                </span>
+              )}
+              <button
+                onClick={onClose}
+                className="text-gray-400 hover:text-white transition"
+              >
+                ✕
+              </button>
             </div>
-          ) : (
-            latestNotifications.length === 0 ? (
+          </div>
+          {/* Notifications list */}
+          <div className="max-h-[60vh] overflow-y-auto">
+            {latestNotifications.length === 0 ? (
               <div className="p-8 text-center text-gray-400">
                 <p>No notifications</p>
               </div>
@@ -116,12 +129,9 @@ export default function NotificationDropdown({
                   </div>
                 ))}
               </div>
-            )
-          )}
-        </div>
-
-        {/* Footer: Only show if logged in */}
-        {isLoggedIn && (
+            )}
+          </div>
+          {/* Footer: Only show if logged in */}
           <div className="p-4 border-t border-gray-700 bg-[#232e3e]/90 sticky bottom-0">
             <Link
               href="/notifications"
@@ -134,8 +144,8 @@ export default function NotificationDropdown({
               View All Notifications
             </Link>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </>
   );
 } 

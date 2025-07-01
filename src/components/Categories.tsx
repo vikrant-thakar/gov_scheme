@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { categories, states, ministries } from "@/data/categoriesData";
+import { useRouter } from "next/navigation";
 
 const tabs = [
     { label: "Categories", value: "categories" },
@@ -13,10 +14,24 @@ export default function Categories() {
     const [showAllCategories, setShowAllCategories] = useState(false);
     const [showAllStates, setShowAllStates] = useState(false);
     const [showAllMinistries, setShowAllMinistries] = useState(false);
+    const router = useRouter();
 
     const categoriesToShow = showAllCategories ? categories : categories.slice(0, 15);
     const statesToShow = showAllStates ? states : states.slice(0, 15);
     const ministriesToShow = showAllMinistries ? ministries : ministries.slice(0, 15);
+
+    const handleCategoryClick = (catName: string) => {
+        localStorage.setItem('tempSchemeFilters', JSON.stringify({ "Scheme Category": catName }));
+        router.push('/schemes');
+    };
+    const handleStateClick = (stateName: string) => {
+        localStorage.setItem('tempSchemeFilters', JSON.stringify({ "State": stateName }));
+        router.push('/schemes');
+    };
+    const handleMinistryClick = (ministryName: string) => {
+        localStorage.setItem('tempSchemeFilters', JSON.stringify({ "Ministry Name": ministryName }));
+        router.push('/schemes');
+    };
 
     return (
         <section className="w-full max-w-6xl mx-auto mt-12 px-4">
@@ -56,6 +71,7 @@ export default function Categories() {
                         <div
                             key={cat.name}
                             className="flex flex-col items-center bg-transparent p-4 rounded   hover:scale-120 transition cursor-pointer"
+                            onClick={() => handleCategoryClick(cat.name)}
                         >
                             <span className="text-4xl mb-2">{cat.icon}</span>
                             <span className="text-green-400 font-bold text-sm mb-1">
@@ -72,6 +88,7 @@ export default function Categories() {
                         <div
                             key={state.name}
                             className="flex flex-col items-center bg-transparent p-4 rounded  hover:scale-120 transition cursor-pointer"
+                            onClick={() => handleStateClick(state.name)}
                         >
                             <span className="text-4xl mb-2">{state.icon}</span>
                             <span className="text-green-400 font-bold text-sm mb-1">
@@ -89,6 +106,7 @@ export default function Categories() {
                         <div
                             key={min.name}
                             className="flex flex-col items-center bg-transparent p-4 rounded  hover:scale-120 transition cursor-pointer"
+                            onClick={() => handleMinistryClick(min.name)}
                         >
                             <span className="text-4xl mb-2">{min.icon}</span>
                             <span className="text-green-400 font-bold text-sm mb-1">

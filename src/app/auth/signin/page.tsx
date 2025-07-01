@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+type User = { name: string; mobile: string; pin: string };
+
 export default function SignInPage() {
   const [mobile, setMobile] = useState("");
   const [pin, setPin] = useState("");
@@ -16,19 +18,23 @@ export default function SignInPage() {
       return;
     }
     // Demo: check localStorage for registered user
-    const userStr = localStorage.getItem("user");
-    if (!userStr) {
+    const usersStr = localStorage.getItem("users");
+    if (!usersStr) {
       setError("No user registered with this mobile number.");
       return;
     }
-    const user = JSON.parse(userStr);
-    if (user.mobile !== mobile || user.pin !== pin) {
+    let users: User[] = [];
+    try {
+      users = JSON.parse(usersStr);
+    } catch {}
+    const user = users.find((u: User) => u.mobile === mobile && u.pin === pin);
+    if (!user) {
       setError("Invalid mobile number or pin.");
       return;
     }
     // Set login state only after successful login
     localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("currentUser", userStr);
+    localStorage.setItem("currentUser", JSON.stringify(user));
     setError("");
     window.location.href = "/";
   };

@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+type User = { name: string; mobile: string; pin: string };
+
 export default function RegisterPage() {
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
@@ -48,19 +50,21 @@ export default function RegisterPage() {
       return;
     }
     // Check for duplicate mobile number
-    const existingUserStr = localStorage.getItem("user");
-    if (existingUserStr) {
+    let users: User[] = [];
+    const usersStr = localStorage.getItem("users");
+    if (usersStr) {
       try {
-        const existingUser = JSON.parse(existingUserStr);
-        if (existingUser.mobile === mobile) {
-          setMobileError("This mobile number is already registered.");
-          return;
-        }
+        users = JSON.parse(usersStr);
       } catch {}
     }
-    // Save user to localStorage (demo)
+    if (users.some((u: User) => u.mobile === mobile)) {
+      setMobileError("This mobile number is already registered.");
+      return;
+    }
+    // Save user to users array in localStorage
     const user = { name, mobile, pin };
-    localStorage.setItem("user", JSON.stringify(user));
+    users.push(user);
+    localStorage.setItem("users", JSON.stringify(users));
     localStorage.setItem("currentUser", JSON.stringify(user));
     localStorage.setItem("isLoggedIn", "true");
     setError("");

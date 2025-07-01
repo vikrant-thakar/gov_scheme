@@ -2,7 +2,11 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
-export default function SchemesHero() {
+interface SchemesHeroProps {
+  onFindSchemeClick?: () => void;
+}
+
+export default function SchemesHero({ onFindSchemeClick }: SchemesHeroProps) {
   const [mounted, setMounted] = useState(false);
   const [hovered, setHovered] = useState(false);
 
@@ -11,8 +15,6 @@ export default function SchemesHero() {
   }, []);
 
   if (!mounted) return null; // Prevent hydration mismatch
-
- 
 
   return (
     <div className="w-full flex flex-col items-center py-12 bg-transparent transition-colors duration-300">
@@ -23,6 +25,7 @@ export default function SchemesHero() {
         className="text-xl font-semibold px-10 py-4 rounded-md flex items-center gap-3 transition bg-green-500 hover:bg-green-600 text-white"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
+        onClick={onFindSchemeClick}
       >
         Find Schemes For You
         <span className="inline-block w-7 h-7 align-middle">

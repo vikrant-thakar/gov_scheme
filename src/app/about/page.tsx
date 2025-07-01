@@ -18,14 +18,6 @@ export default function AboutPage() {
               <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
-            {/* Play button overlay (for style, not functional) */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="bg-green-500 rounded-full w-16 h-16 flex items-center justify-center shadow-lg">
-                <svg width="36" height="36" fill="white" viewBox="0 0 24 24">
-                  <polygon points="9,7 20,12 9,17" />
-                </svg>
-              </div>
-            </div>
           </div>
         </div>
         {/* Vision & Mission */}

@@ -32,7 +32,7 @@ export default function NotificationsPage() {
 
   return (
     <div className="relative">
-      {/* Fixed Background Image - extends behind navbar and footer */}
+      
       <div className="fixed inset-0 z-0">
         <Image
           src="/notification-bg.jpg"

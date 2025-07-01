@@ -1,4 +1,4 @@
-
+"use client";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "../components/Navbar";
@@ -34,7 +34,7 @@ export default function RootLayout({
         <div className="fixed top-0 left-0 w-full z-50">
           <Navbar />
         </div>
-        <div className="relative z-10 pt-20">
+        <div className="relative z-10 pt-20 min-h-screen bg-[#23262b]">
           {children}
           <Footer />
         </div>
