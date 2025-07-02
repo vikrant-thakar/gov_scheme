@@ -10,13 +10,15 @@ interface NotificationDropdownProps {
   onClose: () => void;
   notifications: Notification[];
   onMarkAsRead: (id: number) => void;
+  onMarkAllAsRead: () => void;
 }
 
 export default function NotificationDropdown({ 
   isOpen, 
   onClose, 
   notifications, 
-  onMarkAsRead 
+  onMarkAsRead, 
+  onMarkAllAsRead
 }: NotificationDropdownProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -70,6 +72,15 @@ export default function NotificationDropdown({
                 <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
                   {unreadCount}
                 </span>
+              )}
+              {notifications.length > 0 && (
+                <button
+                  onClick={onMarkAllAsRead}
+                  className="text-xs text-green-400 hover:text-green-600 transition px-2 py-1 rounded focus:outline-none"
+                  title="Mark all as read"
+                >
+                  Mark all as read
+                </button>
               )}
               <button
                 onClick={onClose}

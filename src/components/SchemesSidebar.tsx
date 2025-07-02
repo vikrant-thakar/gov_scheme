@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { UserIcon, IdentificationIcon, AcademicCapIcon, BuildingOffice2Icon, AdjustmentsHorizontalIcon, XMarkIcon, CurrencyDollarIcon, BriefcaseIcon } from "@heroicons/react/24/outline";
 import { states, categories, ministries } from "@/data/categoriesData";
 import LoginModal from "./LoginModal";
-import Select from "react-select";
 import { StylesConfig, GroupBase } from "react-select";
 import {
   genderOptions,
@@ -22,6 +21,16 @@ import {
   governmentEmployeeOptions,
   studentOptions,
 } from "@/data/schemes/filterOptions";
+import dynamic from "next/dynamic";
+
+type OptionType = { value: string; label: string };
+const ClientOnlySelect = dynamic(
+  () =>
+    import("./ClientOnlySelect").then((mod) => mod.default) as Promise<
+      React.ComponentType<import("react-select").Props<OptionType, false, import("react-select").GroupBase<OptionType>>>
+    >,
+  { ssr: false }
+);
 
 const filterGroups = [
   {
@@ -357,13 +366,13 @@ const SchemesSidebar: React.FC<SchemesSidebarProps> = ({ filters, onFiltersChang
                         </div>
                         {filter.type === "select" ? (
                           mounted ? (
-                            <Select
+                            <ClientOnlySelect
                               classNamePrefix="premium-select"
                               styles={{
                                 ...customSelectStyles,
                                 menuPortal: base => ({ ...base, zIndex: 9999 })
                               }}
-                              menuPortalTarget={typeof window !== 'undefined' ? document.body : undefined}
+                              menuPortalTarget={mounted ? document.body : undefined}
                               menuPosition="fixed"
                               isSearchable={true}
                               placeholder="Select"

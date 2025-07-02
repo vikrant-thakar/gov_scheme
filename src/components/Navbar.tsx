@@ -73,14 +73,16 @@ export default function Navbar() {
 
   // Prevent background scroll when mobile menu is open
   useEffect(() => {
-    if (menuOpen) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
+    if (typeof window !== 'undefined') {
+      if (menuOpen) {
+        document.body.classList.add("overflow-hidden");
+      } else {
+        document.body.classList.remove("overflow-hidden");
+      }
+      return () => {
+        document.body.classList.remove("overflow-hidden");
+      };
     }
-    return () => {
-      document.body.classList.remove("overflow-hidden");
-    };
   }, [menuOpen]);
 
   if (!mounted) return null;
