@@ -120,7 +120,7 @@ const FilterPreferences: React.FC<FilterPreferencesProps> = ({ modalMode = false
     if (Number(preferences["Age"]) > 0 && Number(preferences["Age"]) < 18 && preferences["Marital Status"] === "Married") {
       setPreferences((prev) => ({ ...prev, "Marital Status": "" }));
     }
-  }, [initialPreferences, saveToLocalStorage, initialized, preferences["Disability Percentage"], preferences["Student"], preferences["Occupation"], preferences["Government Employee"], preferences["Employment Status"], Number(preferences["Age"]), preferences["Marital Status"]]);
+  }, [initialPreferences, saveToLocalStorage, initialized, preferences]);
 
   const handleChange = (label: string, value: string) => {
     // Mutually exclusive logic on change

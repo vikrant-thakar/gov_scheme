@@ -30,7 +30,7 @@ export default function ContactPage() {
         <h1 className="text-4xl font-bold text-center text-white mb-20">Contact Us</h1>
         <div className="flex flex-col md:flex-row gap-12">
           {/* Contact Information: hidden on mobile */}
-          <div className="w-full ml-15 mb-20 md:w-1/2 flex flex-col justify-center items-center md:items-start -rotate-2 hidden md:flex">
+          <div className="w-full ml-15 mb-20 md:w-1/2 flex-col justify-center items-center md:items-start -rotate-2 hidden md:flex">
             <div className="bg-transparent p-8 w-full md:w-96 space-y-4">
               <h2 className="text-3xl font-bold text-blue-900 mb-2">Contact Information</h2>
               <div className="text-black space-y-2 text-lg">

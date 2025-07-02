@@ -104,7 +104,7 @@ export default function ContactForm({ onSubmit, className = "" }: ContactFormPro
           htmlFor="name"
           className={`absolute transition-all duration-200 pointer-events-none px-1
             ${(form.name || focusedField === 'name')
-              ? 'left-1 top-[-2.4rem] text-2xl font-normal text-black bg-transparent mt-2'
+              ? 'left-1 top-[-2.4rem] text-2xl font-normal text-blue-500  bg-transparent mt-2'
               : 'left-10 top-1/2 -translate-y-1/2 text-lg text-gray-400 bg-transparent'}
           `}
         >
@@ -132,7 +132,7 @@ export default function ContactForm({ onSubmit, className = "" }: ContactFormPro
           htmlFor="email"
           className={`absolute transition-all duration-200 pointer-events-none px-1
             ${(form.email || focusedField === 'email')
-              ? 'left-1 top-[-2.4rem] text-2xl font-normal text-black bg-transparent mt-2'
+              ? 'left-1 top-[-2.4rem] text-2xl font-normal text-blue-500 bg-transparent mt-2'
               : 'left-10 top-1/2 -translate-y-1/2 text-lg text-gray-400 bg-transparent'}
           `}
         >
@@ -160,7 +160,7 @@ export default function ContactForm({ onSubmit, className = "" }: ContactFormPro
           htmlFor="message"
           className={`absolute transition-all duration-200 pointer-events-none px-1
             ${(form.message || focusedField === 'message')
-              ? 'left-1 top-[-2.6rem] text-2xl font-normal text-black bg-transparent mt-2'
+              ? 'left-1 top-[-2.6rem] text-2xl font-normal text-blue-500 bg-transparent mt-2'
               : 'left-10 top-4 text-lg text-gray-400 bg-transparent'}
           `}
         >

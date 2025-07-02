@@ -48,6 +48,10 @@ function PersonalProfileSection({ onLogoutClick }: { onLogoutClick: () => void }
     }
   }, [router]);
 
+  useEffect(() => {
+    if (user) setPin(user.pin);
+  }, [user]);
+
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
@@ -97,9 +101,26 @@ function PersonalProfileSection({ onLogoutClick }: { onLogoutClick: () => void }
       setDeleteMsg("Incorrect pin.");
       return;
     }
+    // Remove from users array
+    const usersStr = localStorage.getItem("users");
+    if (usersStr && user) {
+      let users = [];
+      try {
+        users = JSON.parse(usersStr);
+      } catch {}
+      users = users.filter(
+        (u: User) =>
+          u.mobile !== user.mobile &&
+          (user.email ? u.email !== user.email : true)
+      );
+      localStorage.setItem("users", JSON.stringify(users));
+    }
     localStorage.removeItem("currentUser");
     localStorage.removeItem("user");
     localStorage.setItem("isLoggedIn", "false");
+    localStorage.removeItem("profileFilterPreferences");
+    if (user?.mobile) localStorage.removeItem(`profileFilterPreferences_${user.mobile}`);
+    if (user?.email) localStorage.removeItem(`profileFilterPreferences_${user.email}`);
     setDeleteMsg("");
     router.push("/auth/register");
   };

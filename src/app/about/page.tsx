@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import ZycoonDescription from "@/components/ZycoonDescription";
+import { EyeIcon, FlagIcon } from "@heroicons/react/24/outline";
 
 async function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -28,14 +29,14 @@ export default async function AboutPage() {
         {/* Vision & Mission */}
         <div className="w-full md:w-1/2 flex flex-col gap-10">
           <div className="flex items-start gap-4">
-            <span className="text-4xl mt-1">👁️</span>
+            <EyeIcon className="w-8 h-8 text-blue-400 mt-1" />
             <div>
               <h2 className="text-2xl font-bold text-gray-100 mb-1">Our Vision</h2>
               <p className="text-lg text-gray-300">Our vision is to make citizens life easier</p>
             </div>
           </div>
           <div className="flex items-start gap-4">
-            <span className="text-4xl mt-1">🎯</span>
+            <FlagIcon className="w-8 h-8 text-green-400 mt-1" />
             <div>
               <h2 className="text-2xl font-bold text-gray-100 mb-1">Our Mission</h2>
               <p className="text-lg text-gray-300">Our mission is to streamline the government – user interface for government schemes and benefits.<br />Reduce time and effort required to find and avail a government scheme</p>
