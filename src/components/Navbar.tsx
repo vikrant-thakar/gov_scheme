@@ -88,7 +88,9 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className="sticky top-0 w-full px-4 md:px-6 py-3 flex items-center justify-between bg-black/20 backdrop-blur-lg shadow-sm transition-colors duration-300"
+        className={`sticky top-0 w-full px-4 md:px-6 py-3 flex items-center justify-between shadow-sm transition-colors duration-300 ${
+          pathname === "/notifications" ? "bg-black" : "bg-black/20 backdrop-blur-lg"
+        }`}
         style={{ zIndex: 50 }}
       >
         {/* Emblem and Logo */}

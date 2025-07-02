@@ -17,6 +17,8 @@ export default function SchemesPage() {
   const [sort, setSort] = useState("Relevance");
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<Record<string, string>>({});
+  const [showFilter, setShowFilter] = useState(false);
+  const [showSort, setShowSort] = useState(false);
 
   // Filtering logic
   const filteredSchemes = placeholderSchemes.filter(scheme => {
@@ -43,12 +45,72 @@ export default function SchemesPage() {
 
   return (
     <div className="flex min-h-screen bg-[#23262b] text-gray-100">
-      {/* Sidebar */}
-      <div className="sticky top-0 h-screen">
+      {/* Sidebar: hidden on mobile, shown on md+ */}
+      <div className="sticky top-0 h-screen hidden md:block">
         <SchemesSidebar filters={filters} onFiltersChange={setFilters} />
       </div>
+      {/* Mobile Filter Modal */}
+      {showFilter && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80">
+          {/* Overlay click closes modal */}
+          <div className="absolute inset-0" onClick={() => setShowFilter(false)} />
+          <div className="relative w-full max-w-md mx-auto max-h-[90vh] overflow-y-auto bg-[#23262b] rounded-xl p-4 z-10 mt-20">
+            <button
+              className="absolute top-2 right-2 text-gray-300 hover:text-white text-2xl font-bold z-20"
+              onClick={() => setShowFilter(false)}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <SchemesSidebar filters={filters} onFiltersChange={setFilters} />
+          </div>
+        </div>
+      )}
       {/* Main Content */}
-      <main className="flex-1 p-8 overflow-x-auto">
+      <main className="flex-1 p-4 sm:p-8 overflow-x-auto">
+        {/* Mobile: Filter & Sort Buttons */}
+        <div className="flex md:hidden gap-2 mb-4">
+          <button
+            className="flex-1 px-4 py-2 bg-white text-gray-900 rounded font-semibold flex items-center justify-center gap-2 shadow"
+            onClick={() => setShowFilter(true)}
+          >
+            {/* Filter icon */}
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 13.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-4.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z" /></svg>
+            Filter
+          </button>
+          <button
+            className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded font-semibold flex items-center justify-center gap-2 shadow"
+            onClick={() => setShowSort(true)}
+          >
+            {/* Sort icon */}
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 16h13M3 8h13M3 12h7" /><path d="M21 16v-8m0 0l-4 4m4-4l4 4" /></svg>
+            Sort
+          </button>
+        </div>
+        {/* Sort Modal for Mobile */}
+        {showSort && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80">
+            <div className="relative w-full max-w-xs mx-auto bg-[#23262b] rounded-xl p-6 flex flex-col gap-4">
+              <button
+                className="absolute top-2 right-2 text-gray-300 hover:text-white text-2xl font-bold z-10"
+                onClick={() => setShowSort(false)}
+                aria-label="Close"
+              >
+                ×
+              </button>
+              <span className="text-lg font-bold text-gray-100 mb-2">Sort By</span>
+              <select
+                className="bg-[#23262b] border border-gray-700 rounded px-2 py-2 text-gray-200 text-base focus:outline-none"
+                value={sort}
+                onChange={e => { setSort(e.target.value); setShowSort(false); }}
+              >
+                <option>Relevance</option>
+                <option>Newest</option>
+                <option>Oldest</option>
+              </select>
+            </div>
+          </div>
+        )}
         {/* Search Bar & Tabs */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <div className="flex-1 flex items-center gap-2 bg-[#181a20] rounded px-4 py-2 border border-gray-700">
@@ -73,8 +135,8 @@ export default function SchemesPage() {
             ))}
           </div>
         </div>
-        {/* Results Count & Sort */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+        {/* Results Count & Sort (hidden on mobile) */}
+        <div className="hidden sm:flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
           <span className="text-gray-300 text-sm">We found <span className="text-green-400 font-bold">{filteredSchemes.length}</span> schemes based on your preferences</span>
           <div className="flex items-center gap-2">
             <span className="text-gray-400 text-xs">Sort :</span>
@@ -84,6 +146,10 @@ export default function SchemesPage() {
               <option>Oldest</option>
             </select>
           </div>
+        </div>
+        {/* Results Count for mobile */}
+        <div className="flex sm:hidden mb-2">
+          <span className="text-gray-300 text-sm">We found <span className="text-green-400 font-bold">{filteredSchemes.length}</span> schemes based on your preferences</span>
         </div>
         {/* Schemes List */}
         <div className="flex flex-col gap-6">

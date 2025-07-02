@@ -1,8 +1,6 @@
-"use client";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "../components/Navbar";
-import Footer from "@/components/Footer";
+import { Geist, Geist_Mono } from "next/font/google";
+import ClientLayoutWrapper from "@/components/ClientLayoutWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,30 +12,18 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <title>Zycoon - Government Schemes Made Simple</title>
-        <link rel="icon" href="/zycoon.jpeg" type="image/jpeg" />
+        {/* <link rel="icon" href="/zycoon.jpeg" type="image/jpeg" /> */}
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased relative min-h-screen bg-[#23262b] text-gray-100`}
         style={{ minHeight: "100vh" }}
       >
-        {/* <BackgroundCarousel /> Removed from layout */}
-        {/* Navbar OUTSIDE the z-10 container, with z-50 */}
-        <div className="fixed top-0 left-0 w-full z-50">
-          <Navbar />
-        </div>
-        <div className="relative z-10 pt-20 min-h-screen bg-[#23262b]">
-          {children}
-          <Footer />
-        </div>
+        <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
       </body>
     </html>
   );

@@ -31,8 +31,8 @@ export default function NotificationsPage() {
   const unreadCount = notificationsList.filter(n => !n.read).length;
 
   return (
-    <div className="relative">
-      
+    <div className="relative min-h-screen">
+      {/* Background */}
       <div className="fixed inset-0 z-0">
         <Image
           src="/notification-bg.jpg"
@@ -45,30 +45,26 @@ export default function NotificationsPage() {
         {/* Dark overlay for readability */}
         <div className="absolute inset-0 bg-black/60" />
       </div>
-      
       {/* Content Container */}
-      <div className="relative z-10 ">
+      <div className="relative z-10 min-h-screen flex flex-col">
         {/* Sticky Header Section */}
-        <div className="sticky top-20 z-30 bg-transparent ">
-          <div className="w-full px-10">
-            <div className="flex justify-between items-center">
-              <h1 className="text-4xl font-bold text-green-400">Inbox</h1>
-              <div className="flex gap-4 ">
-                {unreadCount > 0 && (
-                  <button 
-                    onClick={markAllAsRead}
-                    className="px-3 py-2 rounded bg-green-500 hover:bg-green-600 text-white font-semibold transition"
-                  >
-                    Mark All as Read
-                  </button>
-                )}
-              </div>
+        <div className="sticky top-16 z-30 w-full bg-black backdrop-blur-md border-b border-gray-800">
+          <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 md:px-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 py-4">
+              <h1 className="text-2xl sm:text-4xl font-bold text-green-400">Inbox</h1>
+              {unreadCount > 0 && (
+                <button 
+                  onClick={markAllAsRead}
+                  className="mt-2 sm:mt-0 px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white font-semibold transition text-sm sm:text-base"
+                >
+                  Mark All as Read
+                </button>
+              )}
             </div>
           </div>
         </div>
-
         {/* Scrollable Notifications Section */}
-        <div className="w-260 mx-55 px-4 pb-32 pt-6">
+        <div className="w-full max-w-2xl mx-auto px-2 sm:px-4 pb-32 pt-6 flex-1 mt-2 sm:mt-4">
           <div className="space-y-4">
             {notificationsList.length === 0 ? (
               <div className="text-center py-12 text-gray-400">
@@ -78,41 +74,39 @@ export default function NotificationsPage() {
               notificationsList.map((notification) => (
                 <div 
                   key={notification.id}
-                  className={`p-6 rounded-lg border transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-xl ${
+                  className={`p-4 sm:p-6 rounded-lg border transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-xl ${
                     notification.read 
                       ? 'bg-black/20 border-gray-700' 
                       : 'bg-[#1a2231]/80 border-gray-700'
                   }`}
                   onClick={() => markAsRead(notification.id)}
                 >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                          notification.priority === 'high' ? 'bg-red-500 text-white' :
-                          notification.priority === 'medium' ? 'bg-yellow-500 text-black' :
-                          'bg-blue-500 text-white'
-                        }`}>
-                          {notification.priority.toUpperCase()}
-                        </span>
-                        {!notification.read && (
-                          <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-                        )}
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-100 mb-1">
-                        {notification.title}
-                      </h3>
-                      <p className="text-gray-300 mb-2">
-                        {notification.message}
-                      </p>
-                      <div className="mb-2">
-                        <span className="text-sm text-green-400 font-semibold">Eligibility: </span>
-                        <span className="text-sm text-gray-300">{notification.eligibility}</span>
-                      </div>
-                      <span className="text-sm text-gray-400">
-                        {notification.timestamp}
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                        notification.priority === 'high' ? 'bg-red-500 text-white' :
+                        notification.priority === 'medium' ? 'bg-yellow-500 text-black' :
+                        'bg-blue-500 text-white'
+                      }`}>
+                        {notification.priority.toUpperCase()}
                       </span>
+                      {!notification.read && (
+                        <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                      )}
                     </div>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-100 mb-1">
+                      {notification.title}
+                    </h3>
+                    <p className="text-gray-300 mb-2 text-sm sm:text-base">
+                      {notification.message}
+                    </p>
+                    <div className="mb-2">
+                      <span className="text-sm text-green-400 font-semibold">Eligibility: </span>
+                      <span className="text-sm text-gray-300">{notification.eligibility}</span>
+                    </div>
+                    <span className="text-xs sm:text-sm text-gray-400">
+                      {notification.timestamp}
+                    </span>
                   </div>
                 </div>
               ))

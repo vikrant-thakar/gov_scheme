@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import FilterPreferences from "@/components/FilterPreferences";
+import LogoutModal from "@/components/LogoutModal";
 
 const defaultAvatar = "https://randomuser.me/api/portraits/men/32.jpg";
 
@@ -14,7 +15,7 @@ type User = {
   avatar?: string;
 };
 
-function PersonalProfileSection() {
+function PersonalProfileSection({ onLogoutClick }: { onLogoutClick: () => void }) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [avatar, setAvatar] = useState<string>(defaultAvatar);
@@ -234,11 +235,7 @@ function PersonalProfileSection() {
         <div className="md:w-2/3 flex flex-col gap-4 justify-center">
           <button
             className="px-6 py-2 bg-gradient-to-r from-slate-600 to-slate-800 hover:from-slate-700 hover:to-slate-900 rounded-xl text-white font-bold w-36 shadow transition-transform hover:scale-105"
-            onClick={() => {
-              localStorage.setItem("isLoggedIn", "false");
-              window.dispatchEvent(new Event("storage"));
-              router.push("/auth/signin");
-            }}
+            onClick={onLogoutClick}
           >
             Logout
           </button>
@@ -270,6 +267,7 @@ function PersonalProfileSection() {
           {deleteMsg && <div className="text-red-400 text-sm mt-2">{deleteMsg}</div>}
         </div>
       </div>
+      
       <style jsx>{`
         .animate-fade-in {
           animation: fadeIn 0.7s cubic-bezier(0.4,0,0.2,1);
@@ -284,16 +282,30 @@ function PersonalProfileSection() {
 }
 
 export default function ProfilePage() {
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const router = useRouter();
+  const handleLogout = () => {
+    localStorage.setItem("isLoggedIn", "false");
+    window.dispatchEvent(new Event("storage"));
+    router.push("/auth/signin");
+  };
   return (
-    <div className="min-h-screen bg-[#23262b] text-[#ededed] flex flex-col items-center py-10">
-      <div className="w-full max-w-full flex flex-col md:flex-row gap-14 px-4 md:px-8">
-        <div className="flex-[1.3] min-w-0">
-          <PersonalProfileSection />
-        </div>
-        <div className="flex-1 min-w-0">
-          <FilterPreferences />
+    <>
+      <div className="min-h-screen bg-[#23262b] text-[#ededed] flex flex-col items-center py-10">
+        <div className="w-full max-w-full flex flex-col md:flex-row gap-14 px-4 md:px-8">
+          <div className="flex-[1.3] min-w-0">
+            <PersonalProfileSection onLogoutClick={() => setShowLogoutModal(true)} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <FilterPreferences />
+          </div>
         </div>
       </div>
-    </div>
+      <LogoutModal
+        open={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleLogout}
+      />
+    </>
   );
 } 

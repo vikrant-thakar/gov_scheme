@@ -2,7 +2,12 @@ import React from "react";
 import Image from "next/image";
 import ZycoonDescription from "@/components/ZycoonDescription";
 
-export default function AboutPage() {
+async function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export default async function AboutPage() {
+  await wait(2500); // 2.5 second delay for demo
   return (
     <div className="max-w-7xl mx-auto py-16 px-4 space-y-24">
       {/* Vision & Mission Section */}

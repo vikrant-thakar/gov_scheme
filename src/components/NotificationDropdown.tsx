@@ -10,15 +10,13 @@ interface NotificationDropdownProps {
   onClose: () => void;
   notifications: Notification[];
   onMarkAsRead: (id: number) => void;
-  onMarkAllAsRead: () => void;
 }
 
 export default function NotificationDropdown({ 
   isOpen, 
   onClose, 
   notifications, 
-  onMarkAsRead, 
-  onMarkAllAsRead 
+  onMarkAsRead 
 }: NotificationDropdownProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -63,7 +61,7 @@ export default function NotificationDropdown({
       />
       {/* Notification dropdown, only if logged in */}
       {isLoggedIn && (
-        <div className="fixed top-20 right-4 w-100 max-h-[80vh] bg-[#232e3e]/90 rounded-lg shadow-2xl border border-gray-700 z-50 overflow-hidden">
+        <div className="fixed top-20 left-0 right-0 mx-auto w-full max-w-sm md:right-4 md:left-auto md:mx-0 md:w-100 max-h-[80vh] bg-[#232e3e]/90 rounded-lg shadow-2xl border border-gray-700 z-50 overflow-hidden">
           {/* Header */}
           <div className="flex justify-between items-center p-4 border-b border-white">
             <h3 className="text-lg font-semibold text-gray-100">Notifications</h3>
@@ -138,7 +136,6 @@ export default function NotificationDropdown({
               className="block w-full text-center py-2 px-4 bg-green-500 hover:bg-green-600 text-white rounded font-semibold transition"
               onClick={() => {
                 onClose();
-                onMarkAllAsRead();
               }}
             >
               View All Notifications
