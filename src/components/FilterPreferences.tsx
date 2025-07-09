@@ -1,6 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { UserIcon, IdentificationIcon, AcademicCapIcon, BuildingOffice2Icon, AdjustmentsHorizontalIcon, CurrencyDollarIcon, BriefcaseIcon } from "@heroicons/react/24/outline";
+import React, { useState, useEffect, memo } from "react";
+import { User, IdCard, GraduationCap, Building2, SlidersHorizontal, DollarSign, Briefcase } from "lucide-react";
 import {
   genderOptions,
   casteOptions,
@@ -24,40 +24,40 @@ const filterGroups = [
   {
     header: "Personal",
     filters: [
-      { label: "Gender", type: "select", icon: <UserIcon className="w-5 h-5" /> },
-      { label: "Age", type: "input", icon: <IdentificationIcon className="w-5 h-5" /> },
-      { label: "Caste", type: "select", icon: <AcademicCapIcon className="w-5 h-5" /> },
-      { label: "Marital Status", type: "select", icon: <UserIcon className="w-5 h-5" /> },
-      { label: "Disability Percentage", type: "input", icon: <AdjustmentsHorizontalIcon className="w-5 h-5" /> },
+      { label: "Gender", type: "select", icon: <User className="w-5 h-5" /> },
+      { label: "Age", type: "input", icon: <IdCard className="w-5 h-5" /> },
+      { label: "Caste", type: "select", icon: <GraduationCap className="w-5 h-5" /> },
+      { label: "Marital Status", type: "select", icon: <User className="w-5 h-5" /> },
+      { label: "Disability Percentage", type: "input", icon: <SlidersHorizontal className="w-5 h-5" /> },
     ],
   },
   {
     header: "Economic",
     filters: [
-      { label: "Below Poverty Line", type: "select", icon: <CurrencyDollarIcon className="w-5 h-5" /> },
-      { label: "Economic Distress", type: "select", icon: <CurrencyDollarIcon className="w-5 h-5" /> },
-      { label: "Benefit Type", type: "select", icon: <CurrencyDollarIcon className="w-5 h-5" /> },
-      { label: "DBT Scheme", type: "select", icon: <CurrencyDollarIcon className="w-5 h-5" /> },
+      { label: "Below Poverty Line", type: "select", icon: <DollarSign className="w-5 h-5" /> },
+      { label: "Economic Distress", type: "select", icon: <DollarSign className="w-5 h-5" /> },
+      { label: "Benefit Type", type: "select", icon: <DollarSign className="w-5 h-5" /> },
+      { label: "DBT Scheme", type: "select", icon: <DollarSign className="w-5 h-5" /> },
     ],
   },
   {
     header: "Employment",
     filters: [
-      { label: "Government Employee", type: "select", icon: <BuildingOffice2Icon className="w-5 h-5" /> },
-      { label: "Employment Status", type: "select", icon: <BriefcaseIcon className="w-5 h-5" /> },
-      { label: "Student", type: "select", icon: <AcademicCapIcon className="w-5 h-5" /> },
-      { label: "Occupation", type: "select", icon: <BriefcaseIcon className="w-5 h-5" /> },
-      { label: "Differently Abled", type: "select", icon: <AdjustmentsHorizontalIcon className="w-5 h-5" /> },
+      { label: "Government Employee", type: "select", icon: <Building2 className="w-5 h-5" /> },
+      { label: "Employment Status", type: "select", icon: <Briefcase className="w-5 h-5" /> },
+      { label: "Student", type: "select", icon: <GraduationCap className="w-5 h-5" /> },
+      { label: "Occupation", type: "select", icon: <Briefcase className="w-5 h-5" /> },
+      { label: "Differently Abled", type: "select", icon: <SlidersHorizontal className="w-5 h-5" /> },
     ],
   },
   {
     header: "Scheme Details",
     filters: [
-      { label: "State", type: "select", icon: <BuildingOffice2Icon className="w-5 h-5" /> },
-      { label: "Scheme Category", type: "select", icon: <AdjustmentsHorizontalIcon className="w-5 h-5" /> },
-      { label: "Ministry Name", type: "select", icon: <BuildingOffice2Icon className="w-5 h-5" /> },
-      { label: "Application Mode", type: "select", icon: <AdjustmentsHorizontalIcon className="w-5 h-5" /> },
-      { label: "Scheme Type", type: "select", icon: <AdjustmentsHorizontalIcon className="w-5 h-5" /> },
+      { label: "State", type: "select", icon: <Building2 className="w-5 h-5" /> },
+      { label: "Scheme Category", type: "select", icon: <SlidersHorizontal className="w-5 h-5" /> },
+      { label: "Ministry Name", type: "select", icon: <Building2 className="w-5 h-5" /> },
+      { label: "Application Mode", type: "select", icon: <SlidersHorizontal className="w-5 h-5" /> },
+      { label: "Scheme Type", type: "select", icon: <SlidersHorizontal className="w-5 h-5" /> },
     ],
   },
 ];
@@ -71,7 +71,7 @@ interface FilterPreferencesProps {
   saveToLocalStorage?: boolean;
 }
 
-const FilterPreferences: React.FC<FilterPreferencesProps> = ({ modalMode = false, onContinue, initialPreferences = {}, saveToLocalStorage = true }) => {
+const FilterPreferences: React.FC<FilterPreferencesProps> = memo(({ modalMode = false, onContinue, initialPreferences = {}, saveToLocalStorage = true }) => {
   const [preferences, setPreferences] = useState<Record<string, string>>(initialPreferences);
   const [saved, setSaved] = useState(false);
   const [storageKey, setStorageKey] = useState(LOCAL_STORAGE_KEY);
@@ -386,6 +386,8 @@ const FilterPreferences: React.FC<FilterPreferencesProps> = ({ modalMode = false
       `}</style>
     </form>
   );
-};
+});
+
+FilterPreferences.displayName = 'FilterPreferences';
 
 export default FilterPreferences; 

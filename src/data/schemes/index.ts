@@ -83,4 +83,100 @@ export const placeholderSchemes = [
       "'Jai Johar (Old Age Pension)' is a Social Security Scheme by the Tribal Development Dept, Govt of West Bengal. The scheme is aimed at the ST residents of West Bengal of the age of 60 years and above. A monthly pension of ₹ 1,000/- is transferred to the individual bank account of the beneficiary.",
     tags: ["Financial Assistance", "Pension", "Scheduled Tribe", "Senior Citizen", "Social Welfare"],
   },
+];
+
+export const schemesDetails = [
+  {
+    id: "snehashanthwanam",
+    title: "Snehashanthwanam",
+    location: "Kerala",
+    details:
+      "The Government of Kerala has launched the 'Snehashanthwanam' scheme under the Kerala Social Security Mission. The scheme acts as a relief measure for the Endosulfan victims in the state of Kerala.",
+    benefits: [
+      "Monthly financial assistance",
+      "Medical support",
+      "Educational assistance for children of victims"
+    ],
+    eligibility: "Victims of Endosulfan in Kerala as identified by the government.",
+    applicationProcess: "Eligible individuals can apply through the Kerala Social Security Mission website or at designated government offices. Application forms must be filled and submitted with required documents.",
+    documentsRequired: [
+      "Proof of identity",
+      "Medical certificate",
+      "Residence proof",
+      "Bank account details"
+    ],
+    faqs: [
+      {
+        question: "Who can apply for this scheme?",
+        answer: "Only Endosulfan victims identified by the Kerala government are eligible."
+      },
+      {
+        question: "What is the amount of financial assistance?",
+        answer: "The amount varies based on the severity and category as decided by the authorities."
+      }
+    ],
+    sourceUrl: "https://socialsecuritymission.gov.in/snehashanthwanam"
+  },
+  {
+    id: "old-age-pension",
+    title: "NSAP - Indira Gandhi National Old Age Pension Scheme",
+    location: "All India",
+    details:
+      "A central government scheme providing monthly pension to senior citizens living below the poverty line.",
+    benefits: [
+      "Monthly pension of ₹200 (60-79 years)",
+      "Monthly pension of ₹500 (80+ years)",
+      "Direct bank transfer"
+    ],
+    eligibility: "Citizens aged 60 years or above, living below the poverty line (BPL).",
+    applicationProcess: "Apply online through the National Social Assistance Programme portal or at local government offices. Attach required documents.",
+    documentsRequired: [
+      "Age proof",
+      "BPL certificate",
+      "Identity proof",
+      "Bank account details"
+    ],
+    faqs: [
+      {
+        question: "Is there any application fee?",
+        answer: "No, there is no application fee for this scheme."
+      },
+      {
+        question: "How is the pension amount decided?",
+        answer: "It depends on the age of the beneficiary."
+      }
+    ],
+    sourceUrl: "https://nsap.nic.in/"
+  },
+  {
+    id: "coaching-schemes-minorities",
+    title: "Coaching Schemes For SC/ST/OBC (Non-Creamy Layer) & Minority Students",
+    location: "All India",
+    details:
+      "Government-sponsored coaching for students from marginalized communities to help them prepare for competitive exams and higher education.",
+    benefits: [
+      "Free or subsidized coaching",
+      "Stipend for students",
+      "Study materials provided"
+    ],
+    eligibility: "Students belonging to SC, ST, OBC (non-creamy layer), or minority communities, as per government norms.",
+    applicationProcess: "Apply through the National Scholarship Portal or respective state portals. Submit required documents and select preferred coaching center.",
+    documentsRequired: [
+      "Caste certificate",
+      "Income certificate",
+      "Educational certificates",
+      "Identity proof"
+    ],
+    faqs: [
+      {
+        question: "Can I choose any coaching center?",
+        answer: "You can select from the list of empaneled coaching centers."
+      },
+      {
+        question: "Is there a stipend?",
+        answer: "Yes, eligible students receive a stipend during the coaching period."
+      }
+    ],
+    sourceUrl: "https://scholarships.gov.in/"
+  }
 ]; 

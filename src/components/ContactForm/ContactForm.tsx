@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { EnvelopeIcon, UserIcon, ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
+import { Mail, User, MessageCircle } from "lucide-react";
 
 // Types for form state
 interface FormState {
@@ -89,7 +89,7 @@ export default function ContactForm({ onSubmit, className = "" }: ContactFormPro
       
       {/* Name Field */}
       <div className="relative mb-10">
-        <UserIcon className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-blue-400 pointer-events-none" />
+        <User className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-blue-400 pointer-events-none" />
         <input
           type="text"
           id="name"
@@ -117,7 +117,7 @@ export default function ContactForm({ onSubmit, className = "" }: ContactFormPro
 
       {/* Email Field */}
       <div className="relative mb-10">
-        <EnvelopeIcon className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-blue-400 pointer-events-none" />
+        <Mail className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-blue-400 pointer-events-none" />
         <input
           type="email"
           id="email"
@@ -145,7 +145,7 @@ export default function ContactForm({ onSubmit, className = "" }: ContactFormPro
 
       {/* Message Field */}
       <div className="relative mb-4">
-        <ChatBubbleLeftRightIcon className="w-5 h-5 absolute left-3 top-4 text-blue-400 pointer-events-none" />
+        <MessageCircle className="w-5 h-5 absolute left-3 top-4 text-blue-400 pointer-events-none" />
         <textarea
           id="message"
           name="message"

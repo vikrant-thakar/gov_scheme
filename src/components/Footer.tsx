@@ -14,6 +14,7 @@ export default function Footer() {
             width={100}
             height={100}
             className="h-20 w-auto rounded bg-gray-700"
+            priority
           /></Link>
           <span className="text-xs text-gray-400 mt-2">Powered by Digital India Corporation (DIC)</span>
         </div>

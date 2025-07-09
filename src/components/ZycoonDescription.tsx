@@ -1,5 +1,12 @@
 "use client";
 import React from "react";
+import { Josefin_Sans } from 'next/font/google';
+
+const josefin = Josefin_Sans({
+  subsets: ['latin'],
+  weight: ['400', '700'], // Choose weights you need
+  variable: '--font-josefin', // Optional: for CSS variable usage
+});
 
 const description = [
   "zycoon  is  a  National  Platform  that  aims  to  offer  one-stop  search  and  discovery  of  the  Government  schemes.",
@@ -10,7 +17,7 @@ const description = [
 
 export default function ZycoonDescription() {
   return (
-    <div className="max-w-3xl mx-auto mt-12 mb-16 px-4 text-lg text-gray-200 space-y-6">
+    <div className={`${josefin.className} max-w-3xl mx-auto mt-12 mb-16 px-4 text-lg text-gray-200 space-y-6`}>
       {description.map((para, idx) => (
         <p key={idx} className="leading-relaxed flex flex-wrap gap-x-1 gap-y-2">
           {para.split(" ").map((word, widx) => (

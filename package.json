@@ -6,15 +6,22 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "analyze": "ANALYZE=true next build",
+    "build:analyze": "npm run build && npm run analyze",
+    "lighthouse": "lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json"
   },
   "dependencies": {
-    "@heroicons/react": "^2.2.0",
-    "@lottiefiles/react-lottie-player": "^3.6.0",
+    "@tabler/icons-react": "^3.34.0",
+    "lottie-web": "^5.13.0",
+    "lucide-react": "^0.525.0",
     "next": "15.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-select": "^5.10.1"
+    "react-loading-skeleton": "^3.5.0",
+    "react-select": "^5.10.1",
+    "react-window": "^1.8.11",
+    "swiper": "^11.2.10"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -22,6 +29,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-window": "^1.8.8",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
     "tailwindcss": "^4",

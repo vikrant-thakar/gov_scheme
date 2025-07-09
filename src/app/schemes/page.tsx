@@ -1,7 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback, Suspense } from "react";
 import { placeholderSchemes } from "@/data/schemes";
 import SchemesSidebar from "@/components/SchemesSidebar";
+import VirtualizedSchemesList from "@/components/VirtualizedSchemesList";
+import SkeletonSchemeCard from '@/components/SkeletonSchemeCard';
 
 const tabs = [
   { label: "All Schemes", value: "all" },
@@ -9,16 +11,18 @@ const tabs = [
   { label: "Central Schemes", value: "central" },
 ];
 
-const SCHEMES_PER_PAGE = 10;
+const INITIAL_LOAD = 20;
+const LOAD_MORE = 20;
 
 export default function SchemesPage() {
   const [activeTab, setActiveTab] = useState("all");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("Relevance");
-  const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [showFilter, setShowFilter] = useState(false);
   const [showSort, setShowSort] = useState(false);
+  const [loadedCount, setLoadedCount] = useState(INITIAL_LOAD);
+  const listContainerRef = useRef<HTMLDivElement>(null);
 
   // Filtering logic
   const filteredSchemes = placeholderSchemes.filter(scheme => {
@@ -40,8 +44,18 @@ export default function SchemesPage() {
     return matchesSearch && matchesFilters;
   });
 
-  // Pagination logic
-  const currentSchemes = filteredSchemes.slice((currentPage - 1) * SCHEMES_PER_PAGE, currentPage * SCHEMES_PER_PAGE);
+  // Progressive loading logic
+  const visibleSchemes = filteredSchemes.slice(0, loadedCount);
+
+  // Infinite scroll handler
+  const handleScroll = useCallback(() => {
+    const container = listContainerRef.current;
+    if (!container) return;
+    if (container.scrollTop + container.clientHeight >= container.scrollHeight - 200) {
+      // Near bottom, load more
+      setLoadedCount(count => Math.min(filteredSchemes.length, count + LOAD_MORE));
+    }
+  }, [filteredSchemes.length]);
 
   return (
     <div className="flex min-h-screen bg-[#23262b] text-gray-100">
@@ -152,53 +166,16 @@ export default function SchemesPage() {
           <span className="text-gray-300 text-sm">We found <span className="text-green-400 font-bold">{filteredSchemes.length}</span> schemes based on your preferences</span>
         </div>
         {/* Schemes List */}
-        <div className="flex flex-col gap-6">
-          {currentSchemes.map((scheme, idx) => (
-            <div key={idx} className="bg-[#181a20] rounded-lg p-6 shadow border border-gray-800">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-2">
-                <span className="text-lg font-bold text-green-400">{scheme.title}</span>
-                <span className="text-xs text-gray-400">{scheme.location}</span>
-              </div>
-              <p className="text-gray-200 mb-3 text-sm">{scheme.description}</p>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {scheme.tags.map((tag, i) => (
-                  <span key={i} className="bg-[#23262b] text-green-400 px-3 py-1 rounded-full text-xs font-semibold border border-green-700">{tag}</span>
-                ))}
-              </div>
+        <div className="flex flex-col gap-6" ref={listContainerRef} onScroll={handleScroll} style={{ height: "70vh", overflowY: "auto" }}>
+          <Suspense fallback={
+            <div className="flex flex-col gap-6">
+              {Array.from({ length: 6 }).map((_, i) => <SkeletonSchemeCard key={i} />)}
             </div>
-          ))}
+          }>
+            <VirtualizedSchemesList schemes={visibleSchemes} containerHeight={500} />
+          </Suspense>
         </div>
-        {/* Pagination */}
-        <div className="flex justify-center mt-12">
-          <nav className="flex items-center gap-2">
-            <button
-              className="w-8 h-8 flex items-center justify-center rounded-full text-gray-300 hover:bg-[#23262b] disabled:opacity-50"
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              aria-label="Previous page"
-            >
-              &lt;
-            </button>
-            {Array.from({ length: Math.ceil(filteredSchemes.length / SCHEMES_PER_PAGE) }, (_, i) => i + 1).map(page => (
-              <button
-                key={`page-${page}`}
-                className={`w-8 h-8 flex items-center justify-center rounded-full font-semibold ${currentPage === page ? 'bg-green-500 text-white' : 'text-gray-200 hover:bg-[#23262b]'}`}
-                onClick={() => setCurrentPage(page)}
-                disabled={currentPage === page}
-              >
-                {page}
-              </button>
-            ))}
-            <button
-              className="w-8 h-8 flex items-center justify-center rounded-full text-gray-300 hover:bg-[#23262b] disabled:opacity-50"
-              onClick={() => setCurrentPage((p) => Math.min(Math.ceil(filteredSchemes.length / SCHEMES_PER_PAGE), p + 1))}
-              disabled={currentPage === Math.ceil(filteredSchemes.length / SCHEMES_PER_PAGE)}
-              aria-label="Next page"
-            >
-              &gt;
-            </button>
-          </nav>
-        </div>
+        {/* Pagination removed, infinite scroll handles loading more */}
       </main>
     </div>
   );

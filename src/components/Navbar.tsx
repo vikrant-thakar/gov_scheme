@@ -12,8 +12,6 @@ export default function Navbar() {
   const [notificationsList, setNotificationsList] = useState<Notification[]>(notifications);
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const defaultAvatar = "https://randomuser.me/api/portraits/men/32.jpg";
-  const [avatar, setAvatar] = useState<string>(defaultAvatar);
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   
@@ -30,22 +28,11 @@ export default function Navbar() {
     }
   }, []);
 
-  // Update login state and avatar on mount and on storage event
+  // Update login state on mount and on storage event
   useEffect(() => {
     const syncAuth = () => {
       const loggedIn = localStorage.getItem('isLoggedIn');
       setIsLoggedIn(loggedIn === 'true');
-      const userStr = localStorage.getItem('currentUser');
-      if (userStr) {
-        try {
-          const user = JSON.parse(userStr);
-          setAvatar(user.avatar || defaultAvatar);
-        } catch {
-          setAvatar(defaultAvatar);
-        }
-      } else {
-        setAvatar(defaultAvatar);
-      }
     };
     syncAuth(); // run on mount
     window.addEventListener('storage', syncAuth);
@@ -135,19 +122,19 @@ export default function Navbar() {
           <div className="hidden md:flex gap-2">
             <Link
               href="/"
-              className={`px-3 py-1 rounded ${pathname === "/" ? "bg-[#1a2231] text-white font-semibold" : "text-gray-200 hover:bg-[#1a2231]"}`}
+              className={`px-3 py-1 rounded transition-all duration-200 ${pathname === "/" ? "text-white border-b-2 border-white" : "text-gray-200 hover:bg-[#1a2231]"}`}
             >
               Home
             </Link>
             <Link
               href="/about"
-              className={`px-3 py-1 rounded ${pathname === "/about" ? "bg-[#1a2231] text-white font-semibold" : "text-gray-200 hover:bg-[#1a2231]"}`}
+              className={`px-3 py-1 rounded transition-all duration-200 ${pathname === "/about" ? "text-white border-b-2 border-white" : "text-gray-200 hover:bg-[#1a2231]"}`}
             >
               About Us
             </Link>
             <Link
               href="/contact"
-              className={`px-3 py-1 rounded ${pathname === "/contact" ? "bg-[#1a2231] text-white font-semibold" : "text-gray-200 hover:bg-[#1a2231]"}`}
+              className={`px-3 py-1 rounded transition-all duration-200 ${pathname === "/contact" ? "text-white border-b-2 border-white" : "text-gray-200 hover:bg-[#1a2231]"}`}
             >
               Contact Us
             </Link>
@@ -224,14 +211,18 @@ export default function Navbar() {
             </Link>
           ) : (
             <Link href="/profile">
-              <div className="w-9 h-9 rounded-full bg-gray-300 overflow-hidden border-2 border-gray-200 cursor-pointer flex items-center justify-center">
-                <Image
-                  src={avatar}
-                  alt="Profile"
-                  width={36}
-                  height={36}
-                  className="w-full h-full object-cover"
-                />
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-green-500 to-blue-400  cursor-pointer flex items-center justify-center hover:from-blue-400 hover:to-green-600 transition-all duration-200 shadow-md hover:shadow-lg">
+                <svg
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  className="text-white"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
               </div>
             </Link>
           )}

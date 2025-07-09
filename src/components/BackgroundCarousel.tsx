@@ -1,7 +1,14 @@
 // components/BackgroundCarousel.tsx
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import Image from "next/image";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 // Use your actual images from the public folder
 const images = [
@@ -13,121 +20,128 @@ const images = [
   "/6-full.webp",
 ];
 
+// Use original images array
+const carouselImages = images;
+
 export default function BackgroundCarousel() {
-  const [index, setIndex] = useState(0);
-  const touchStartX = useRef<number | null>(null);
-  const touchEndX = useRef<number | null>(null);
-
-  // Auto-swipe logic
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-    }, 7000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const handlePrev = () => {
-    setIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  };
-  const handleNext = () => {
-    setIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-  };
-
-  // Touch handlers for swipe
-  const onTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-  const onTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.touches[0].clientX;
-  };
-  const onTouchEnd = () => {
-    if (touchStartX.current !== null && touchEndX.current !== null) {
-      const diff = touchStartX.current - touchEndX.current;
-      if (Math.abs(diff) > 50) {
-        if (diff > 0) {
-          handleNext(); // swipe left
-        } else {
-          handlePrev(); // swipe right
-        }
-      }
-    }
-    touchStartX.current = null;
-    touchEndX.current = null;
-  };
-
   return (
     <>
       {/* Mobile: Only show the image, no black bars, content starts right after */}
-      <div className="block sm:hidden w-full" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
-        <Image
-          src={images[index]}
-          alt="Background carousel"
-          className="w-full h-auto object-contain"
-          style={{ display: "block" }}
-          width={1000}
-          height={1000}
-        />
+      <div className="block sm:hidden w-full">
+        <Swiper
+          modules={[Autoplay]}
+          autoplay={{
+            delay: 7000,
+            disableOnInteraction: false,
+          }}
+          loop={false}
+          slidesPerView={1}
+          slidesPerGroup={1}
+          spaceBetween={0}
+          className="w-full"
+        >
+          {carouselImages.map((img, index) => (
+            <SwiperSlide key={img}>
+              <Image
+                src={img}
+                alt={`Background carousel ${index + 1}`}
+                className="w-full h-auto object-contain"
+                style={{ display: "block" }}
+                width={1000}
+                height={1000}
+                priority={img === "/1-full.webp"}
+                loading={img === "/1-full.webp" ? "eager" : "lazy"}
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
-      {/* Desktop: Carousel as before */}
-      <div
-        className="hidden sm:block absolute top-0 left-0 w-full h-80 md:h-96 lg:h-140 z-30 overflow-hidden"
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-      >
-        <div className="relative w-full h-full">
-          {images.map((img, i) => {
-            let translate = 0;
-            if (i === index) {
-              translate = 0;
-            } else if (
-              (i === index - 1) ||
-              (index === 0 && i === images.length - 1)
-            ) {
-              translate = -100;
-            } else if (
-              (i === index + 1) ||
-              (index === images.length - 1 && i === 0)
-            ) {
-              translate = 100;
-            } else {
-              translate = 1000;
-            }
-            return (
+
+      {/* Desktop: Carousel with navigation and pagination */}
+      <div className="hidden sm:block absolute top-0 left-0 w-full h-80 md:h-96 lg:h-140 z-30 overflow-hidden">
+        <Swiper
+          modules={[Autoplay, Navigation, Pagination]}
+          autoplay={{
+            delay: 7000,
+            disableOnInteraction: false,
+          }}
+          navigation={{
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          }}
+          pagination={{
+            clickable: true,
+            el: '.swiper-pagination',
+          }}
+          loop={false}
+          slidesPerView={1}
+          slidesPerGroup={1}
+          spaceBetween={0}
+          className="w-full h-full"
+        >
+          {carouselImages.map((img) => (
+            <SwiperSlide key={img}>
               <div
-                key={img}
-                className="absolute top-0 left-0 w-full h-full transition-transform duration-500 bg-black"
+                className="w-full h-full bg-black"
                 style={{
                   backgroundImage: `url('${img}')`,
                   backgroundSize: "contain",
                   backgroundPosition: "center",
                   backgroundRepeat: "no-repeat",
-                  transform: `translateX(${translate}%)`,
-                  opacity: Math.abs(translate) === 1000 ? 0 : 1,
-                  zIndex: i === index ? 2 : 1,
                 }}
               />
-            );
-          })}
-          {/* Arrow buttons - hidden on mobile */}
-          <button
-            aria-label="Previous image"
-            onClick={handlePrev}
-            className="pointer-events-auto absolute left-4 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white/80 rounded-full w-10 h-10 items-center justify-center z-40 border border-white shadow-lg hidden sm:flex"
-            style={{ outline: "none", border: "none" }}
-          >
+            </SwiperSlide>
+          ))}
+          
+          {/* Custom Navigation Buttons */}
+          <div className="swiper-button-prev !text-white !bg-white/60 hover:!bg-white/80 !rounded-full !w-10 !h-10 !items-center !justify-center !border !border-white !shadow-lg">
             <span className="text-black text-2xl">&#8592;</span>
-          </button>
-          <button
-            aria-label="Next image"
-            onClick={handleNext}
-            className="pointer-events-auto absolute right-4 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white/80 rounded-full w-10 h-10 items-center justify-center z-40 border border-white shadow-lg hidden sm:flex"
-            style={{ outline: "none", border: "none" }}
-          >
+          </div>
+          <div className="swiper-button-next !text-white !bg-white/60 hover:!bg-white/80 !rounded-full !w-10 !h-10 !items-center !justify-center !border !border-white !shadow-lg">
             <span className="text-black text-2xl">&#8594;</span>
-          </button>
-        </div>
+          </div>
+          
+          {/* Custom Pagination */}
+          <div className="swiper-pagination !bottom-4"></div>
+        </Swiper>
       </div>
+
+      {/* Custom CSS for Swiper styling */}
+      <style jsx global>{`
+        .swiper-button-prev,
+        .swiper-button-next {
+          color: white !important;
+          background: rgba(255, 255, 255, 0.6) !important;
+          border-radius: 50% !important;
+          width: 40px !important;
+          height: 40px !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          border: 1px solid white !important;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+          transition: background-color 0.3s ease !important;
+        }
+
+        .swiper-button-prev:hover,
+        .swiper-button-next:hover {
+          background: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        .swiper-button-prev::after,
+        .swiper-button-next::after {
+          display: none !important;
+        }
+
+        .swiper-pagination-bullet {
+          background: rgba(255, 255, 255, 0.6) !important;
+          opacity: 1 !important;
+        }
+
+        .swiper-pagination-bullet-active {
+          background: white !important;
+        }
+      `}</style>
     </>
   );
 }

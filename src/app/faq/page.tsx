@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 const faqs = [
   {
@@ -95,7 +96,7 @@ export default function FAQPage() {
               >
                 <span className="font-semibold text-lg">{faq.question}</span>
                 <span className="text-2xl text-gray-400">
-                  {openIndex === idx ? "▲" : "▼"}
+                  {openIndex === idx ? <ChevronUp /> : <ChevronDown />}
                 </span>
               </button>
               {openIndex === idx && (
