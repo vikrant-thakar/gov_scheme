@@ -1,6 +1,5 @@
 "use client";
-import React, { useState, useRef, useCallback, Suspense } from "react";
-import { placeholderSchemes } from "@/data/schemes";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import SchemesSidebar from "@/components/SchemesSidebar";
 import VirtualizedSchemesList from "@/components/VirtualizedSchemesList";
 import SkeletonSchemeCard from '@/components/SkeletonSchemeCard';
@@ -14,6 +13,25 @@ const tabs = [
 const INITIAL_LOAD = 20;
 const LOAD_MORE = 20;
 
+// Define the Scheme type to match the UI and backend (id: string)
+interface Scheme {
+  id: string;
+  title: string;
+  details: string;
+  location: string;
+  tags: string[];
+}
+
+// Backend scheme type
+interface BackendScheme {
+  id: number;
+  name: string;
+  description: string;
+  category?: string;
+  ministry?: string;
+  target_groups?: string[];
+}
+
 export default function SchemesPage() {
   const [activeTab, setActiveTab] = useState("all");
   const [search, setSearch] = useState("");
@@ -22,17 +40,43 @@ export default function SchemesPage() {
   const [showFilter, setShowFilter] = useState(false);
   const [showSort, setShowSort] = useState(false);
   const [loadedCount, setLoadedCount] = useState(INITIAL_LOAD);
+  const [schemes, setSchemes] = useState<Scheme[]>([]);
+  const [loading, setLoading] = useState(true);
   const listContainerRef = useRef<HTMLDivElement>(null);
 
+  // Fetch schemes from backend
+  useEffect(() => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    setLoading(true);
+    fetch(`${apiUrl}/schemes`)
+      .then(res => res.json())
+      .then((data: BackendScheme[]) => {
+        // Map backend data to UI format
+        const mapped: Scheme[] = data.map((scheme) => ({
+          id: String(scheme.id),
+          title: scheme.name,
+          details: scheme.description,
+          location: scheme.category || "",
+          tags: [scheme.ministry, ...(scheme.target_groups || [])].filter((tag): tag is string => Boolean(tag)),
+        }));
+        setSchemes(mapped);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error fetching schemes:", err);
+        setLoading(false);
+      });
+  }, []);
+
   // Filtering logic
-  const filteredSchemes = placeholderSchemes.filter(scheme => {
-    // Search logic: match title, description, or tags
+  const filteredSchemes = schemes.filter(scheme => {
+    // Search logic: match title, details, or tags
     const searchLower = search.toLowerCase();
     const matchesSearch =
       !searchLower ||
       scheme.title.toLowerCase().includes(searchLower) ||
-      scheme.description.toLowerCase().includes(searchLower) ||
-      (scheme.tags && scheme.tags.some(tag => tag.toLowerCase().includes(searchLower)));
+      scheme.details.toLowerCase().includes(searchLower) ||
+      (scheme.tags && scheme.tags.some((tag: string) => tag.toLowerCase().includes(searchLower)));
     // Filter logic: match all selected filters (if present in scheme)
     const matchesFilters = Object.entries(filters).every(([key, value]) => {
       if (!value) return true;
@@ -81,7 +125,7 @@ export default function SchemesPage() {
         </div>
       )}
       {/* Main Content */}
-      <main className="flex-1 p-4 sm:p-8 overflow-x-auto">
+      <main className="flex-1 flex flex-col gap-4 p-6">
         {/* Mobile: Filter & Sort Buttons */}
         <div className="flex md:hidden gap-2 mb-4">
           <button
@@ -126,7 +170,7 @@ export default function SchemesPage() {
           </div>
         )}
         {/* Search Bar & Tabs */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
           <div className="flex-1 flex items-center gap-2 bg-[#181a20] rounded px-4 py-2 border border-gray-700">
             <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" strokeWidth="2" /><line x1="21" y1="21" x2="16.65" y2="16.65" strokeWidth="2" strokeLinecap="round" /></svg>
             <input
@@ -150,7 +194,7 @@ export default function SchemesPage() {
           </div>
         </div>
         {/* Results Count & Sort (hidden on mobile) */}
-        <div className="hidden sm:flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+        <div className="hidden md:flex items-center justify-between mb-2">
           <span className="text-gray-300 text-sm">We found <span className="text-green-400 font-bold">{filteredSchemes.length}</span> schemes based on your preferences</span>
           <div className="flex items-center gap-2">
             <span className="text-gray-400 text-xs">Sort :</span>
@@ -167,13 +211,13 @@ export default function SchemesPage() {
         </div>
         {/* Schemes List */}
         <div className="flex flex-col gap-6" ref={listContainerRef} onScroll={handleScroll} style={{ height: "70vh", overflowY: "auto" }}>
-          <Suspense fallback={
+          {loading ? (
             <div className="flex flex-col gap-6">
               {Array.from({ length: 6 }).map((_, i) => <SkeletonSchemeCard key={i} />)}
             </div>
-          }>
+          ) : (
             <VirtualizedSchemesList schemes={visibleSchemes} containerHeight={500} />
-          </Suspense>
+          )}
         </div>
         {/* Pagination removed, infinite scroll handles loading more */}
       </main>

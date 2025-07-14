@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { VariableSizeList as List, VariableSizeList } from 'react-window';
 
 interface Scheme {
+  id: string;
   title: string;
-  description: string;
+  details: string;
   location: string;
   tags: string[];
 }
@@ -21,7 +22,7 @@ const DEFAULT_HEIGHT = 180;
 const VirtualizedSchemesList: React.FC<VirtualizedSchemesListProps> = memo(({
   schemes,
   containerHeight = 600,
-  overscan = 5
+  overscan = 2
 }) => {
   // Store measured heights
   const sizeMap = useRef<{ [key: number]: number }>({});
@@ -48,17 +49,16 @@ const VirtualizedSchemesList: React.FC<VirtualizedSchemesListProps> = memo(({
         const height = node.getBoundingClientRect().height;
         setSize(index, height);
       }
-    }, [index, setSize]);
-    const id = scheme.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    }, [index]);
     return (
       <div ref={rowRef} style={{ ...style, left: 0, right: 0, width: '100%' }}>
-        <Link href={`/schemes/${id}`} className="block group">
+        <Link href={`/schemes/${scheme.id}`} className="block group">
           <div className="bg-[#181a20] rounded-lg p-6 shadow border border-gray-800 group-hover:border-green-500 transition mb-4 animate-fade-in">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-2">
               <span className="text-lg font-bold text-green-400">{scheme.title}</span>
               <span className="text-xs text-gray-400">{scheme.location}</span>
             </div>
-            <p className="text-gray-200 mb-3 text-sm">{scheme.description}</p>
+            <p className="text-gray-200 mb-3 text-sm">{scheme.details}</p>
             <div className="flex flex-wrap gap-2 mt-2">
               {scheme.tags.map((tag, i) => (
                 <span key={i} className="bg-[#23262b] text-green-400 px-3 py-1 rounded-full text-xs font-semibold border border-green-700">
