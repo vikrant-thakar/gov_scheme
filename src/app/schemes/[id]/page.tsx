@@ -9,18 +9,6 @@ interface SchemeDetailsPageProps {
   params: { id: string };
 }
 
-// Backend scheme type
-interface BackendScheme {
-  id: number;
-  name: string;
-  description: string;
-  category?: string;
-  ministry?: string;
-  target_groups?: string[];
-  eligibility_criteria?: any;
-  apply_link?: string;
-}
-
 export default function SchemeDetailsPage({ params }: SchemeDetailsPageProps) {
   const [scheme, setScheme] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -33,18 +21,22 @@ export default function SchemeDetailsPage({ params }: SchemeDetailsPageProps) {
         if (!res.ok) throw new Error("Not found");
         return res.json();
       })
-      .then((data: BackendScheme) => {
+      .then((data: any) => {
         // Map backend data to the structure expected by SchemesDetailed
         const mapped = {
           id: String(data.id),
-          title: data.name,
-          details: data.description,
-          location: data.category || "",
-          tags: [data.ministry, ...(data.target_groups || [])].filter((tag): tag is string => Boolean(tag)),
-          // Add more fields as needed for your design
-          eligibility: data.eligibility_criteria ? JSON.stringify(data.eligibility_criteria) : undefined,
-          sourceUrl: data.apply_link,
-          // benefits, applicationProcess, documentsRequired, faqs, etc. can be added if available in backend
+          title: data.title,
+          details: data.details,
+          location: data.location,
+          benefits: data.benefits,
+          eligibility: data.eligibility,
+          application_process: data.application_process,
+          documents_required: data.documents_required,
+          faqs: data.faqs,
+          sourceUrl: data.source_url,
+          tags: Array.isArray(data.tags) ? data.tags : [],
+          created_at: data.created_at,
+          updated_at: data.updated_at,
         };
         setScheme(mapped);
         setLoading(false);

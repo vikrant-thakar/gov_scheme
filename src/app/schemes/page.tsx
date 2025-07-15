@@ -22,16 +22,6 @@ interface Scheme {
   tags: string[];
 }
 
-// Backend scheme type
-interface BackendScheme {
-  id: number;
-  name: string;
-  description: string;
-  category?: string;
-  ministry?: string;
-  target_groups?: string[];
-}
-
 export default function SchemesPage() {
   const [activeTab, setActiveTab] = useState("all");
   const [search, setSearch] = useState("");
@@ -50,14 +40,14 @@ export default function SchemesPage() {
     setLoading(true);
     fetch(`${apiUrl}/schemes`)
       .then(res => res.json())
-      .then((data: BackendScheme[]) => {
+      .then((data: { id: number; title: string; details: string; location?: string; tags?: string[] }[]) => {
         // Map backend data to UI format
         const mapped: Scheme[] = data.map((scheme) => ({
           id: String(scheme.id),
-          title: scheme.name,
-          details: scheme.description,
-          location: scheme.category || "",
-          tags: [scheme.ministry, ...(scheme.target_groups || [])].filter((tag): tag is string => Boolean(tag)),
+          title: scheme.title,
+          details: scheme.details,
+          location: scheme.location || "",
+          tags: Array.isArray(scheme.tags) ? scheme.tags : [],
         }));
         setSchemes(mapped);
         setLoading(false);
