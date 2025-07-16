@@ -82,24 +82,39 @@ const FilterPreferences: React.FC<FilterPreferencesProps> = memo(({ modalMode = 
       if (Object.keys(initialPreferences).length > 0) {
         setPreferences(initialPreferences);
       } else if (saveToLocalStorage) {
-        // Get current user from localStorage
-        const userStr = localStorage.getItem("currentUser");
+        // Get user info from backend using token
+        const token = localStorage.getItem("token");
         let key = LOCAL_STORAGE_KEY;
-        if (userStr) {
-          try {
-            const user = JSON.parse(userStr);
-            if (user && user.mobile) {
-              key = `profileFilterPreferences_${user.mobile}`;
-            } else if (user && user.email) {
-              key = `profileFilterPreferences_${user.email}`;
-            }
-          } catch {}
+        if (token) {
+          fetch("http://127.0.0.1:8000/auth/me", {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+            .then(async (res) => {
+              if (!res.ok) throw new Error("Not authenticated");
+              return res.json();
+            })
+            .then((user) => {
+              if (user && user.mobile) {
+                key = `profileFilterPreferences_${user.mobile}`;
+              } else if (user && user.id) {
+                key = `profileFilterPreferences_${user.id}`;
+              }
+              setStorageKey(key);
+              const savedPrefs = localStorage.getItem(key);
+              if (savedPrefs) {
+                setPreferences(JSON.parse(savedPrefs));
+              }
+              setInitialized(true);
+            })
+            .catch(() => {
+              setStorageKey(key);
+              setInitialized(true);
+            });
+        } else {
+          setStorageKey(key);
+          setInitialized(true);
         }
-        setStorageKey(key);
-        const savedPrefs = localStorage.getItem(key);
-        if (savedPrefs) {
-          setPreferences(JSON.parse(savedPrefs));
-        }
+        return;
       }
       setInitialized(true);
     }

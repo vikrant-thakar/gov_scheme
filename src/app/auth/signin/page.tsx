@@ -3,46 +3,47 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-type User = { name: string; mobile: string; pin: string };
-
 export default function SignInPage() {
   const [mobile, setMobile] = useState("");
   const [pin, setPin] = useState("");
   const [showPin, setShowPin] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     if (!mobile || !pin) {
       setError("Please enter both mobile number and pin.");
       return;
     }
-    // Demo: check localStorage for registered user
-    const usersStr = localStorage.getItem("users");
-    if (!usersStr) {
-      setError("No user registered with this mobile number.");
-      return;
-    }
-    let users: User[] = [];
     try {
-      users = JSON.parse(usersStr);
-    } catch {}
-    const user = users.find((u: User) => u.mobile === mobile && u.pin === pin);
-    if (!user) {
-      setError("Invalid mobile number or pin.");
-      return;
+      const response = await fetch('http://127.0.0.1:8000/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mobile, pin }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.detail || 'Login failed');
+        return;
+      }
+      const data = await response.json();
+      localStorage.setItem('token', data.access_token);
+      setError("");
+      window.location.href = "/";
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || 'Login failed');
+      } else {
+        setError('Login failed');
+      }
     }
-    // Set login state only after successful login
-    localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("currentUser", JSON.stringify(user));
-    setError("");
-    window.location.href = "/";
   };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const isLoggedIn = localStorage.getItem("isLoggedIn");
-      if (isLoggedIn === "true") {
+      const token = localStorage.getItem("token");
+      if (token) {
         window.location.href = "/";
       }
     }

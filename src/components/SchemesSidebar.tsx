@@ -163,30 +163,35 @@ const SchemesSidebar: React.FC<SchemesSidebarProps> = memo(({ filters, onFilters
   }, [onFiltersChange]);
 
   // Helper to get the correct profile filter key
-  const getProfileFilterKey = () => {
+  const getProfileFilterKey = async () => {
     const LOCAL_STORAGE_KEY = "profileFilterPreferences";
-    const userStr = localStorage.getItem("currentUser");
+    const token = localStorage.getItem("token");
     let key = LOCAL_STORAGE_KEY;
-    if (userStr) {
+    if (token) {
       try {
-        const user = JSON.parse(userStr);
-        if (user && user.mobile) {
-          key = `profileFilterPreferences_${user.mobile}`;
-        } else if (user && user.email) {
-          key = `profileFilterPreferences_${user.email}`;
+        const res = await fetch("http://127.0.0.1:8000/auth/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const user = await res.json();
+          if (user && user.mobile) {
+            key = `profileFilterPreferences_${user.mobile}`;
+          } else if (user && user.id) {
+            key = `profileFilterPreferences_${user.id}`;
+          }
         }
       } catch {}
     }
     return key;
   };
 
-  const handleUseMyProfile = () => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    if (!isLoggedIn) {
+  const handleUseMyProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
       setShowLoginModal(true);
       return;
     }
-    const key = getProfileFilterKey();
+    const key = await getProfileFilterKey();
     const savedPrefs = localStorage.getItem(key);
     if (savedPrefs) {
       onFiltersChange(JSON.parse(savedPrefs));

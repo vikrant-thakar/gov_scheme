@@ -5,11 +5,9 @@ import FilterPreferences from "@/components/FilterPreferences";
 import LogoutModal from "@/components/LogoutModal";
 
 type User = {
+  id: number;
   name: string;
-  pin: string;
-  email?: string;
-  avatar?: string;
-  mobile?: string;
+  mobile: string;
 };
 
 function PersonalProfileSection({ onLogoutClick }: { onLogoutClick: () => void }) {
@@ -17,18 +15,15 @@ function PersonalProfileSection({ onLogoutClick }: { onLogoutClick: () => void }
   const [user, setUser] = useState<User | null>(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [pin, setPin] = useState("");
   const [deleteMsg, setDeleteMsg] = useState("");
   const [deletePin, setDeletePin] = useState("");
-  const [errors, setErrors] = useState({ firstName: '', lastName: '', email: '' });
   const [saveMsg, setSaveMsg] = useState("");
-  // Add state for pin modal
   const [showPinModal, setShowPinModal] = useState(false);
   const [oldPin, setOldPin] = useState("");
   const [newPinModal, setNewPinModal] = useState("");
   const [confirmPinModal, setConfirmPinModal] = useState("");
   const [pinModalMsg, setPinModalMsg] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const handleOpenPinModal = () => {
     setOldPin("");
@@ -38,25 +33,9 @@ function PersonalProfileSection({ onLogoutClick }: { onLogoutClick: () => void }
     setShowPinModal(true);
   };
 
+  // Pin change logic would require a backend endpoint; for now, just close modal
   const handleChangePinModal = () => {
-    if (oldPin !== pin) {
-      setPinModalMsg("Old pin is incorrect.");
-      return;
-    }
-    if (!newPinModal || newPinModal !== confirmPinModal) {
-      setPinModalMsg("New pins do not match.");
-      return;
-    }
-    const updated = {
-      ...user,
-      name: user?.name || "",
-      pin: newPinModal,
-    };
-    setUser(updated);
-    setPin(newPinModal);
-    localStorage.setItem("currentUser", JSON.stringify(updated));
-    localStorage.setItem("user", JSON.stringify(updated));
-    setPinModalMsg("Pin updated successfully.");
+    setPinModalMsg("Feature not implemented");
     setTimeout(() => {
       setShowPinModal(false);
       setPinModalMsg("");
@@ -64,85 +43,41 @@ function PersonalProfileSection({ onLogoutClick }: { onLogoutClick: () => void }
   };
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-    const userStr = localStorage.getItem("currentUser");
-    if (isLoggedIn !== "true" || !userStr) {
+    const token = localStorage.getItem("token");
+    if (!token) {
       router.replace("/auth/signin");
-    } else {
-      const u = JSON.parse(userStr);
-      setUser(u);
-      setFirstName(u.name?.split(" ")[0] || "");
-      setLastName(u.name?.split(" ").slice(1).join(" ") || "");
-      setEmail(u.email || "");
+      return;
     }
+    fetch("http://127.0.0.1:8000/auth/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Not authenticated");
+        return res.json();
+      })
+      .then((data) => {
+        setUser(data);
+        setFirstName(data.name?.split(" ")[0] || "");
+        setLastName(data.name?.split(" ").slice(1).join(" ") || "");
+        setLoading(false);
+      })
+      .catch(() => {
+        router.replace("/auth/signin");
+      });
   }, [router]);
 
-  useEffect(() => {
-    if (user) setPin(user.pin);
-  }, [user]);
-
-  const validate = () => {
-    let valid = true;
-    const newErrors = { firstName: '', lastName: '', email: '' };
-    if (!firstName.trim()) {
-      newErrors.firstName = 'First name is required.';
-      valid = false;
-    }
-    if (!lastName.trim()) {
-      newErrors.lastName = 'Last name is required.';
-      valid = false;
-    }
-    if (email && !/^\S+@\S+\.\S+$/.test(email)) {
-      newErrors.email = 'Email is invalid.';
-      valid = false;
-    }
-    setErrors(newErrors);
-    return valid;
-  };
-
   const handleSavePersonal = () => {
-    if (!validate()) return;
-    const updated = {
-      name: `${firstName} ${lastName}`.trim() || '',
-      email: email || '',
-      pin: user?.pin || '',
-    };
-    setUser(updated);
-    localStorage.setItem('currentUser', JSON.stringify(updated));
-    localStorage.setItem('user', JSON.stringify(updated));
-    setSaveMsg("Profile updated successfully!");
+    // Would require a backend endpoint to update user info
+    setSaveMsg("Feature not implemented");
     setTimeout(() => setSaveMsg(""), 2000);
   };
 
   const handleDeleteAccount = () => {
-    if (deletePin !== pin) {
-      setDeleteMsg("Incorrect pin.");
-      return;
-    }
-    // Remove from users array
-    const usersStr = localStorage.getItem("users");
-    if (usersStr && user) {
-      let users = [];
-      try {
-        users = JSON.parse(usersStr);
-      } catch {}
-      users = users.filter(
-        (u: User) =>
-          u.mobile !== user.mobile &&
-          (user.email ? u.email !== user.email : true)
-      );
-      localStorage.setItem("users", JSON.stringify(users));
-    }
-    localStorage.removeItem("currentUser");
-    localStorage.removeItem("user");
-    localStorage.setItem("isLoggedIn", "false");
-    localStorage.removeItem("profileFilterPreferences");
-    if (user?.mobile) localStorage.removeItem(`profileFilterPreferences_${user.mobile}`);
-    if (user?.email) localStorage.removeItem(`profileFilterPreferences_${user.email}`);
-    setDeleteMsg("");
-    router.push("/auth/register");
+    setDeleteMsg("Feature not implemented");
+    setTimeout(() => setDeleteMsg(""), 2000);
   };
 
+  if (loading) return <div className="text-center text-lg">Loading...</div>;
   if (!user) return null;
 
   return (
@@ -169,7 +104,6 @@ function PersonalProfileSection({ onLogoutClick }: { onLogoutClick: () => void }
                 value={firstName}
                 onChange={e => setFirstName(e.target.value)}
               />
-              {errors.firstName && <div className="text-red-400 text-xs mt-1">{errors.firstName}</div>}
             </div>
             <div className="flex-1">
               <label className="block text-sm mb-1 font-semibold text-gray-300">Last name</label>
@@ -178,17 +112,16 @@ function PersonalProfileSection({ onLogoutClick }: { onLogoutClick: () => void }
                 value={lastName}
                 onChange={e => setLastName(e.target.value)}
               />
-              {errors.lastName && <div className="text-red-400 text-xs mt-1">{errors.lastName}</div>}
             </div>
           </div>
           <div className="mb-4">
             <label className="block text-sm mb-1 font-semibold text-gray-300">Email address</label>
             <input
               className="w-full px-4 py-2 rounded-xl bg-[#23262b]/80 border border-gray-700 text-[#ededed] focus:ring-2 focus:ring-green-400 focus:border-green-400 transition"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
+              value={user?.name}
+              onChange={e => setFirstName(e.target.value)}
             />
-            {errors.email && <div className="text-red-400 text-xs mt-1">{errors.email}</div>}
+            {/* {errors.email && <div className="text-red-400 text-xs mt-1">{errors.email}</div>} */}
           </div>
           <button
             className="px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-xl text-white font-bold mt-2 w-36 shadow transition-transform hover:scale-105"
@@ -344,7 +277,7 @@ export default function ProfilePage() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const router = useRouter();
   const handleLogout = () => {
-    localStorage.setItem("isLoggedIn", "false");
+    localStorage.removeItem("token");
     window.dispatchEvent(new Event("storage"));
     router.push("/auth/signin");
   };

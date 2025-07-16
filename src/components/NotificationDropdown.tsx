@@ -1,34 +1,69 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Notification } from "@/data/notificationsData";
 import LoginModal from "./LoginModal";
 import { useRouter } from "next/navigation";
+
+interface NotificationType {
+  id: number;
+  title: string;
+  message: string;
+  eligibility?: string;
+  priority: string;
+  read: boolean;
+  timestamp: string;
+}
 
 interface NotificationDropdownProps {
   isOpen: boolean;
   onClose: () => void;
-  notifications: Notification[];
-  onMarkAsRead: (id: number) => void;
-  onMarkAllAsRead: () => void;
 }
 
-export default function NotificationDropdown({ 
-  isOpen, 
-  onClose, 
-  notifications, 
-  onMarkAsRead, 
-  onMarkAllAsRead
-}: NotificationDropdownProps) {
+export default function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const router = useRouter();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
+      setIsLoggedIn(!!localStorage.getItem("token"));
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen && isLoggedIn) {
+      // Fetch notifications from backend
+      const token = localStorage.getItem("token");
+      if (token) {
+        fetch("http://127.0.0.1:8000/notifications", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then(res => res.json())
+          .then(data => setNotifications(data))
+          .catch(() => setNotifications([]));
+      }
+    }
+  }, [isOpen, isLoggedIn]);
+
+  const markAsRead = (id: number) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    fetch("http://127.0.0.1:8000/notifications/mark-read", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ notification_id: id }),
+    })
+      .then(() => {
+        setNotifications((prev) => prev.map(n => n.id === id ? { ...n, read: true } : n));
+      });
+  };
+
+  const markAllAsRead = () => {
+    notifications.forEach(n => {
+      if (!n.read) markAsRead(n.id);
+    });
+  };
 
   useEffect(() => {
     if (isOpen && !isLoggedIn) {
@@ -38,9 +73,12 @@ export default function NotificationDropdown({
     }
   }, [isOpen, isLoggedIn]);
 
+  // Defensive: ensure notifications is always an array
+  const safeNotifications = Array.isArray(notifications) ? notifications : [];
+
   // Get only the 3 latest notifications
-  const latestNotifications = notifications.slice(0, 3);
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const latestNotifications = safeNotifications.slice(0, 3);
+  const unreadCount = safeNotifications.filter(n => !n.read).length;
 
   if (!isOpen) return null;
 
@@ -73,9 +111,9 @@ export default function NotificationDropdown({
                   {unreadCount}
                 </span>
               )}
-              {notifications.length > 0 && (
+              {safeNotifications.length > 0 && (
                 <button
-                  onClick={onMarkAllAsRead}
+                  onClick={markAllAsRead}
                   className="text-xs text-green-400 hover:text-green-600 transition px-2 py-1 rounded focus:outline-none"
                   title="Mark all as read"
                 >
@@ -104,7 +142,7 @@ export default function NotificationDropdown({
                     className={`p-4 hover:bg-[#1a2231] transition-all cursor-pointer ${
                       !notification.read ? 'bg-[#1a2231]' : ''
                     }`}
-                    onClick={() => onMarkAsRead(notification.id)}
+                    onClick={() => markAsRead(notification.id)}
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex-1 min-w-0">

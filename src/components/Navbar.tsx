@@ -4,12 +4,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import NotificationDropdown from "./NotificationDropdown";
-import { notifications, Notification } from "@/data/notificationsData";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
-  const [notificationsList, setNotificationsList] = useState<Notification[]>(notifications);
+  interface NotificationType {
+    id: number;
+    title: string;
+    message: string;
+    eligibility?: string;
+    priority: string;
+    read: boolean;
+    timestamp: string;
+  }
+  const [notificationsList, setNotificationsList] = useState<NotificationType[]>([]);
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
@@ -20,43 +28,37 @@ export default function Navbar() {
     setMounted(true);
   }, []);
 
-  // Sync with localStorage to persist state across components
+  // Fetch notifications from backend for badge
   useEffect(() => {
-    const savedNotifications = localStorage.getItem('notifications');
-    if (savedNotifications) {
-      setNotificationsList(JSON.parse(savedNotifications));
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setNotificationsList([]);
+      return;
     }
-  }, []);
+    fetch('http://127.0.0.1:8000/notifications', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => res.json())
+      .then(data => setNotificationsList(data))
+      .catch(() => setNotificationsList([]));
+  }, [notificationDropdownOpen, isLoggedIn]);
 
   // Update login state on mount and on storage event
   useEffect(() => {
     const syncAuth = () => {
-      const loggedIn = localStorage.getItem('isLoggedIn');
-      setIsLoggedIn(loggedIn === 'true');
+      const token = localStorage.getItem('token');
+      setIsLoggedIn(!!token);
     };
     syncAuth(); // run on mount
     window.addEventListener('storage', syncAuth);
     return () => window.removeEventListener('storage', syncAuth);
   }, []);
 
+  // Defensive: ensure notificationsList is always an array
+  const safeNotificationsList = Array.isArray(notificationsList) ? notificationsList : [];
+
   // Calculate unread notifications count
-  const unreadCount = notificationsList.filter(n => !n.read).length;
-
-  // Function to mark notification as read
-  const markAsRead = (id: number) => {
-    const updatedNotifications = notificationsList.map(notification => 
-      notification.id === id ? { ...notification, read: true } : notification
-    );
-    setNotificationsList(updatedNotifications);
-    localStorage.setItem('notifications', JSON.stringify(updatedNotifications));
-  };
-
-  // Function to mark all notifications as read
-  const markAllAsRead = () => {
-    const updatedNotifications = notificationsList.map(notification => ({ ...notification, read: true }));
-    setNotificationsList(updatedNotifications);
-    localStorage.setItem('notifications', JSON.stringify(updatedNotifications));
-  };
+  const unreadCount = safeNotificationsList.filter(n => !n.read).length;
 
   // Prevent background scroll when mobile menu is open
   useEffect(() => {
@@ -71,6 +73,16 @@ export default function Navbar() {
       };
     }
   }, [menuOpen]);
+
+  // Profile icon click handler
+  const handleProfileClick = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.push("/profile");
+    } else {
+      router.push("/auth/signin");
+    }
+  };
 
   if (!mounted) return null;
 
@@ -210,21 +222,23 @@ export default function Navbar() {
               </button>
             </Link>
           ) : (
-            <Link href="/profile">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-green-500 to-blue-400  cursor-pointer flex items-center justify-center hover:from-blue-400 hover:to-green-600 transition-all duration-200 shadow-md hover:shadow-lg">
-                <svg
-                  width="18"
-                  height="18"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                  className="text-white"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                </svg>
-              </div>
-            </Link>
+            <div
+              className="w-9 h-9 rounded-full bg-gradient-to-br from-green-500 to-blue-400  cursor-pointer flex items-center justify-center hover:from-blue-400 hover:to-green-600 transition-all duration-200 shadow-md hover:shadow-lg"
+              onClick={handleProfileClick}
+              title="Profile"
+            >
+              <svg
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                className="text-white"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
+            </div>
           )}
         </div>
 
@@ -279,9 +293,6 @@ export default function Navbar() {
       <NotificationDropdown 
         isOpen={notificationDropdownOpen} 
         onClose={() => setNotificationDropdownOpen(false)}
-        notifications={notificationsList}
-        onMarkAsRead={markAsRead}
-        onMarkAllAsRead={markAllAsRead}
       />
     </>
   );

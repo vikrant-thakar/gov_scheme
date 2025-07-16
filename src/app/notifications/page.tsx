@@ -1,34 +1,58 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { notifications, Notification } from "@/data/notificationsData";
+
+interface NotificationType {
+  id: number;
+  title: string;
+  message: string;
+  eligibility?: string;
+  priority: string;
+  read: boolean;
+  timestamp: string;
+}
 
 export default function NotificationsPage() {
-  const [notificationsList, setNotificationsList] = useState<Notification[]>(notifications);
+  const [notificationsList, setNotificationsList] = useState<NotificationType[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Sync with localStorage to persist state across components
   useEffect(() => {
-    const savedNotifications = localStorage.getItem('notifications');
-    if (savedNotifications) {
-      setNotificationsList(JSON.parse(savedNotifications));
-    }
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    fetch("http://127.0.0.1:8000/notifications", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => res.json())
+      .then(data => {
+        setNotificationsList(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   const markAsRead = (id: number) => {
-    const updatedNotifications = notificationsList.map(notification => 
-      notification.id === id ? { ...notification, read: true } : notification
-    );
-    setNotificationsList(updatedNotifications);
-    localStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    fetch("http://127.0.0.1:8000/notifications/mark-read", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ notification_id: id }),
+    })
+      .then(() => {
+        setNotificationsList((prev) => prev.map(n => n.id === id ? { ...n, read: true } : n));
+      });
   };
+
+  // Defensive: ensure notificationsList is always an array
+  const safeNotificationsList = Array.isArray(notificationsList) ? notificationsList : [];
 
   const markAllAsRead = () => {
-    const updatedNotifications = notificationsList.map(notification => ({ ...notification, read: true }));
-    setNotificationsList(updatedNotifications);
-    localStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+    safeNotificationsList.forEach(n => {
+      if (!n.read) markAsRead(n.id);
+    });
   };
 
-  const unreadCount = notificationsList.filter(n => !n.read).length;
+  const unreadCount = safeNotificationsList.filter(n => !n.read).length;
 
   return (
     <div className="relative min-h-screen">
@@ -66,12 +90,16 @@ export default function NotificationsPage() {
         {/* Scrollable Notifications Section */}
         <div className="w-full max-w-2xl mx-auto px-2 sm:px-4 pb-32 pt-6 flex-1 mt-2 sm:mt-4">
           <div className="space-y-4">
-            {notificationsList.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-12 text-gray-400">
+                <p className="text-xl">Loading notifications...</p>
+              </div>
+            ) : safeNotificationsList.length === 0 ? (
               <div className="text-center py-12 text-gray-400">
                 <p className="text-xl">No notifications found</p>
               </div>
             ) : (
-              notificationsList.map((notification) => (
+              safeNotificationsList.map((notification) => (
                 <div 
                   key={notification.id}
                   className={`p-4 sm:p-6 rounded-lg border transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-xl ${

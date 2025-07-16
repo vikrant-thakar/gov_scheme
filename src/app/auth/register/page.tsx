@@ -3,8 +3,6 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-type User = { name: string; mobile: string; pin: string };
-
 export default function RegisterPage() {
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
@@ -17,7 +15,7 @@ export default function RegisterPage() {
   const [pinError, setPinError] = useState("");
   const [confirmPinError, setConfirmPinError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setNameError("");
     setMobileError("");
@@ -49,32 +47,38 @@ export default function RegisterPage() {
       setConfirmPinError("Pins do not match.");
       return;
     }
-    // Check for duplicate mobile number
-    let users: User[] = [];
-    const usersStr = localStorage.getItem("users");
-    if (usersStr) {
-      try {
-        users = JSON.parse(usersStr);
-      } catch {}
+    // Backend registration
+    try {
+      const response = await fetch('http://127.0.0.1:8000/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, mobile, pin, confirm_pin: confirmPin }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (errorData.detail && errorData.detail.includes('Mobile number already registered')) {
+          setMobileError(errorData.detail);
+        } else {
+          setError(errorData.detail || 'Registration failed');
+        }
+        return;
+      }
+      // Registration successful
+      setError("");
+      window.location.href = "/auth/signin";
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || 'Registration failed');
+      } else {
+        setError('Registration failed');
+      }
     }
-    if (users.some((u: User) => u.mobile === mobile)) {
-      setMobileError("This mobile number is already registered.");
-      return;
-    }
-    // Save user to users array in localStorage
-    const user = { name, mobile, pin };
-    users.push(user);
-    localStorage.setItem("users", JSON.stringify(users));
-    localStorage.setItem("currentUser", JSON.stringify(user));
-    localStorage.setItem("isLoggedIn", "true");
-    setError("");
-    window.location.href = "/";
   };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const isLoggedIn = localStorage.getItem("isLoggedIn");
-      if (isLoggedIn === "true") {
+      const token = localStorage.getItem("token");
+      if (token) {
         window.location.href = "/";
       }
     }
