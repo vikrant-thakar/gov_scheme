@@ -34,7 +34,7 @@ export default function ContactPage() {
             <div className="bg-transparent p-8 w-full md:w-96 space-y-4">
               <h2 className="text-3xl font-bold text-blue-900 mb-2">Contact Information</h2>
               <div className="text-black space-y-2 text-lg">
-                <div><span className="font-semibold">Email:</span> support@zycoon.com</div>
+                <div><span className="font-semibold">Email:</span> support@Adhikaar.com</div>
                 <div><span className="font-semibold">Phone:</span> (011) 24303714</div>
                 <div><span className="font-semibold">Address:</span> 4th Floor, NeGD, Electronics Niketan, 6 CGO Complex, Lodhi Road, New Delhi - 110003, India</div>
               </div>

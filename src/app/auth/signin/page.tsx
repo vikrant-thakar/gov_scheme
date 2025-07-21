@@ -56,7 +56,7 @@ export default function SignInPage() {
         {/* Logo (replace with your logo if needed) */}
         <div className="mb-8 flex items-center gap-2">
           <span className="inline-block w-8 h-8 bg-green-400 rounded-full" />
-          <span className="text-2xl font-bold text-gray-800">Zycoon</span>
+          <span className="text-2xl font-bold text-gray-800">Adhikaar</span>
         </div>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 w-full text-left">Sign in to your account</h1>
         <p className="text-gray-500 mb-6 w-full text-left text-sm">

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import SchemesSidebar from "@/components/SchemesSidebar";
 import VirtualizedSchemesList from "@/components/VirtualizedSchemesList";
 import SkeletonSchemeCard from '@/components/SkeletonSchemeCard';
@@ -10,16 +10,20 @@ const tabs = [
   { label: "Central Schemes", value: "central" },
 ];
 
-const INITIAL_LOAD = 20;
-const LOAD_MORE = 20;
-
-// Define the Scheme type to match the UI and backend (id: string)
 interface Scheme {
   id: string;
   title: string;
   details: string;
   location: string;
   tags: string[];
+}
+
+interface BackendScheme {
+  id: number;
+  title: string;
+  details: string;
+  location?: string;
+  tags?: string[];
 }
 
 export default function SchemesPage() {
@@ -29,19 +33,32 @@ export default function SchemesPage() {
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [showFilter, setShowFilter] = useState(false);
   const [showSort, setShowSort] = useState(false);
-  const [loadedCount, setLoadedCount] = useState(INITIAL_LOAD);
-  const [schemes, setSchemes] = useState<Scheme[]>([]);
+  const [filteredSchemes, setFilteredSchemes] = useState<Scheme[]>([]);
   const [loading, setLoading] = useState(true);
   const listContainerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch schemes from backend
+  // Fetch schemes from backend on filter/search change
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    setLoading(true);
-    fetch(`${apiUrl}/schemes`)
-      .then(res => res.json())
-      .then((data: { id: number; title: string; details: string; location?: string; tags?: string[] }[]) => {
-        // Map backend data to UI format
+    const fetchFilteredSchemes = async () => {
+      setLoading(true);
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+        const response = await fetch(`${apiUrl}/schemes/filter`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            searchTerm: search,
+            filters: filters,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch schemes');
+        }
+
+        const data: BackendScheme[] = await response.json();
         const mapped: Scheme[] = data.map((scheme) => ({
           id: String(scheme.id),
           title: scheme.title,
@@ -49,47 +66,23 @@ export default function SchemesPage() {
           location: scheme.location || "",
           tags: Array.isArray(scheme.tags) ? scheme.tags : [],
         }));
-        setSchemes(mapped);
-        setLoading(false);
-      })
-      .catch(err => {
+        
+        setFilteredSchemes(mapped);
+      } catch (err) {
         console.error("Error fetching schemes:", err);
+        setFilteredSchemes([]);
+      } finally {
         setLoading(false);
-      });
-  }, []);
+      }
+    };
 
-  // Filtering logic
-  const filteredSchemes = schemes.filter(scheme => {
-    // Search logic: match title, details, or tags
-    const searchLower = search.toLowerCase();
-    const matchesSearch =
-      !searchLower ||
-      scheme.title.toLowerCase().includes(searchLower) ||
-      scheme.details.toLowerCase().includes(searchLower) ||
-      (scheme.tags && scheme.tags.some((tag: string) => tag.toLowerCase().includes(searchLower)));
-    // Filter logic: match all selected filters (if present in scheme)
-    const matchesFilters = Object.entries(filters).every(([key, value]) => {
-      if (!value) return true;
-      // Example: match state/location
-      if (key === "State") return scheme.location === value;
-      // Add more filter logic as needed for real data
-      return true;
-    });
-    return matchesSearch && matchesFilters;
-  });
+    const debounceFetch = setTimeout(() => {
+        fetchFilteredSchemes();
+    }, 300); // 300ms debounce
 
-  // Progressive loading logic
-  const visibleSchemes = filteredSchemes.slice(0, loadedCount);
+    return () => clearTimeout(debounceFetch);
+  }, [search, filters]);
 
-  // Infinite scroll handler
-  const handleScroll = useCallback(() => {
-    const container = listContainerRef.current;
-    if (!container) return;
-    if (container.scrollTop + container.clientHeight >= container.scrollHeight - 200) {
-      // Near bottom, load more
-      setLoadedCount(count => Math.min(filteredSchemes.length, count + LOAD_MORE));
-    }
-  }, [filteredSchemes.length]);
 
   return (
     <div className="flex min-h-screen bg-[#23262b] text-gray-100">
@@ -200,13 +193,13 @@ export default function SchemesPage() {
           <span className="text-gray-300 text-sm">We found <span className="text-green-400 font-bold">{filteredSchemes.length}</span> schemes based on your preferences</span>
         </div>
         {/* Schemes List */}
-        <div className="flex flex-col gap-6" ref={listContainerRef} onScroll={handleScroll} style={{ height: "70vh", overflowY: "auto" }}>
+        <div className="flex flex-col gap-6" ref={listContainerRef} style={{ height: "70vh", overflowY: "auto" }}>
           {loading ? (
             <div className="flex flex-col gap-6">
               {Array.from({ length: 6 }).map((_, i) => <SkeletonSchemeCard key={i} />)}
             </div>
           ) : (
-            <VirtualizedSchemesList schemes={visibleSchemes} containerHeight={500} />
+            <VirtualizedSchemesList schemes={filteredSchemes} containerHeight={500} />
           )}
         </div>
         {/* Pagination removed, infinite scroll handles loading more */}

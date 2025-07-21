@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import ZycoonDescription from "@/components/ZycoonDescription";
+import AdhikaarDescription from "@/components/AdhikaarDescription";
 import { Eye, Flag } from "lucide-react";
 
 async function wait(ms: number) {
@@ -49,7 +49,7 @@ export default async function AboutPage() {
       <div className="flex flex-col md:flex-row items-center gap-12">
         {/* Description */}
         <div className="w-full md:w-1/2 space-y-6 text-gray-100 text-lg">
-        <ZycoonDescription />
+        <AdhikaarDescription />
         </div>
         {/* Illustration */}
         <div className="w-full md:w-1/2 flex justify-center">

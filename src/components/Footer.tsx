@@ -9,7 +9,7 @@ export default function Footer() {
         {/* Temporary Logo */}
         <div className="flex flex-col items-center gap-2 mb-2 md:mb-0">
           <Link href="/"><Image
-            src="/zycoon.jpeg"
+            src="/Adhikaar.png"
             alt="Temporary Logo"
             width={100}
             height={100}
@@ -28,13 +28,13 @@ export default function Footer() {
         </div>
         {/* Contact */}
         <div className="text-xs text-gray-400 text-center md:text-right">
-          <div>support-zycoon[at]digitalindia[dot]gov[dot]in</div>
+          <div>support-Adhikaar[at]digitalindia[dot]gov[dot]in</div>
           <div>(011) 24303714</div>
           <div>4th Floor, NeGD, Electronics Niketan,<br />6 CGO Complex, Lodhi Road, New Delhi - 110003, India</div>
         </div>
       </div>
       <div className="text-center text-xs text-gray-500 mt-6">
-        &copy; {new Date().getFullYear()} zycoon. All rights reserved.
+        &copy; {new Date().getFullYear()} Adhikaar. All rights reserved.
       </div>
     </footer>
   );

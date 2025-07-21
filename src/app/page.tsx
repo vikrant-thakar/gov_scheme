@@ -2,7 +2,7 @@
 import SchemesHero from "@/components/SchemesHero";
 import Categories from "@/components/Categories";
 import BackgroundCarousel from "../components/BackgroundCarousel";
-import ZycoonDescription from "@/components/ZycoonDescription";
+import AdhikaarDescription from "@/components/AdhikaarDescription";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import FilterPreferences from "@/components/FilterPreferences";
@@ -40,7 +40,7 @@ export default function Home() {
       <div className="pt-0 sm:pt-80 md:pt-96 lg:pt-[28rem]">
         <SchemesHero onFindSchemeClick={() => setShowModal(true)} />
         <Categories />
-        <ZycoonDescription />
+        <AdhikaarDescription />
       </div>
     </>
   );
