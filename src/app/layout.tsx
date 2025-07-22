@@ -12,7 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <head>
         <title>Adhikaar - Government Schemes Made Simple</title>
-        {/* <link rel="icon" href="/Adhikaar.jpeg" type="image/jpeg" /> */}
+        <link rel="icon" href="/Adhikaar logo.png" type="image/jpeg" /> 
       </head>
       <body
         className={`${GeistSans.variable} ${GeistMono.variable} antialiased relative min-h-screen bg-[#23262b] text-gray-100`}

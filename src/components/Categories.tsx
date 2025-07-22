@@ -74,9 +74,7 @@ export default function Categories() {
                             onClick={() => handleCategoryClick(cat.name)}
                         >
                             <span className="text-4xl mb-2">{cat.icon}</span>
-                            <span className="text-green-400 font-bold text-sm mb-1">
-                                {cat.count} Schemes
-                            </span>
+                            
                             <span className="text-center text-gray-200 text-sm">
                                 {cat.name}
                             </span>
@@ -91,10 +89,7 @@ export default function Categories() {
                             onClick={() => handleStateClick(state.name)}
                         >
                             <span className="text-4xl mb-2">{state.icon}</span>
-                            <span className="text-green-400 font-bold text-sm mb-1">
-                                {state.state} State{" "}
-                                <span className="text-gray-400">/ {state.central} Central</span>
-                            </span>
+                            {/* Removed state and central count display */}
                             <span className="text-center text-gray-200 text-sm">
                                 {state.name}
                             </span>
@@ -109,9 +104,7 @@ export default function Categories() {
                             onClick={() => handleMinistryClick(min.name)}
                         >
                             <span className="text-4xl mb-2">{min.icon}</span>
-                            <span className="text-green-400 font-bold text-sm mb-1">
-                                {min.schemes} Schemes
-                            </span>
+                            
                             <span className="text-center text-gray-200 text-sm">
                                 {min.name}
                             </span>

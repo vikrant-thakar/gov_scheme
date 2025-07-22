@@ -113,22 +113,17 @@ export default function Navbar() {
               <path d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          {/* Digital India Logo - second on mobile */}
-          <a
-            href="https://www.digitalindia.gov.in/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center order-2 md:order-none"
-          >
+          {/* Adhikaar Logo*/}
+          <Link href="/" className="flex items-center order-2 md:order-none">
             <Image
-              src="https://cdn.digitalindiacorporation.in/wp-content/themes/di-child/assets/images/digital-india.svg.gzip"
-              alt="Digital India"
-              width={80}
-              height={40}
-              className="h-8 w-auto"
+              src="/Adhikaar.png"
+              alt="Adhikaar Logo"
+              width={100}
+              height={100}
+              className="max-h-10 w-auto"
               priority
             />
-          </a>
+          </Link>
           
           {/* Nav links: visible on desktop only */}
           <div className="hidden md:flex gap-2">
